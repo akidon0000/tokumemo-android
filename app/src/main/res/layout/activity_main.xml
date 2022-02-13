@@ -37,7 +37,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/GoBackButton"
+            android:id="@+id/webViewGoBackButton"
             android:layout_width="60dp"
             android:layout_height="0dp"
             android:layout_marginStart="20dp"
@@ -50,7 +50,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/GoForwardButton"
+            android:id="@+id/webViewGoForwardButton"
             android:layout_width="60dp"
             android:layout_height="0dp"
             android:layout_marginStart="30dp"
@@ -60,11 +60,11 @@
             android:rotationY="180"
             android:textColor="#000000"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/GoBackButton"
+            app:layout_constraintStart_toEndOf="@+id/webViewGoBackButton"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/ShowServiceListsButton"
+            android:id="@+id/showServiceListsButton"
             android:layout_width="60dp"
             android:layout_height="0dp"
             android:layout_marginEnd="20dp"
