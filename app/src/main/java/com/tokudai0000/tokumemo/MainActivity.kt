@@ -25,10 +25,8 @@ class MainActivity : AppCompatActivity() {
         webViewGoBackButton.setOnClickListener { v: View? -> webView?.goBack() }
         webViewGoForwardButton.setOnClickListener { v: View? -> webView?.goForward() }
 
-
         webViewSetup()
         login()
-
     }
 
     // MARK: - Private func
