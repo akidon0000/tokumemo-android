@@ -18,7 +18,8 @@
         </activity>
 
         <activity
-            android:name=".menu.MenuActivity">
+            android:name=".menu.MenuActivity"
+            android:theme="@style/Theme.AppCompat.Translucent">
         </activity>
     </application>
     // webViewの権限を追加
