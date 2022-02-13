@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/TopView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
@@ -10,7 +11,7 @@
         android:id="@+id/webView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+        app:layout_constraintBottom_toTopOf="@+id/FooterContents"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -18,7 +19,7 @@
     </WebView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
+        android:id="@+id/FooterContents"
         android:layout_width="wrap_content"
         android:layout_height="44dp"
         android:background="#FFFFFF"
@@ -27,7 +28,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <View
-            android:id="@+id/view2"
+            android:id="@+id/BorderGrayLine"
             android:layout_width="wrap_content"
             android:layout_height="1dp"
             android:background="#636262"
@@ -36,7 +37,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/GoBackButton"
             android:layout_width="60dp"
             android:layout_height="0dp"
             android:layout_marginStart="20dp"
@@ -49,7 +50,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/GoForwardButton"
             android:layout_width="60dp"
             android:layout_height="0dp"
             android:layout_marginStart="30dp"
@@ -59,11 +60,11 @@
             android:rotationY="180"
             android:textColor="#000000"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/button"
+            app:layout_constraintStart_toEndOf="@+id/GoBackButton"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/ShowServiceListsButton"
             android:layout_width="60dp"
             android:layout_height="0dp"
             android:layout_marginEnd="20dp"
