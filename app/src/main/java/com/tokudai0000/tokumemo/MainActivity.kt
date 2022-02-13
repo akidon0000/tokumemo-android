@@ -1,11 +1,13 @@
 package com.tokudai0000.tokumemo
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
+import com.tokudai0000.tokumemo.menu.MenuActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,6 +26,13 @@ class MainActivity : AppCompatActivity() {
         // Action
         webViewGoBackButton.setOnClickListener { v: View? -> webView?.goBack() }
         webViewGoForwardButton.setOnClickListener { v: View? -> webView?.goForward() }
+        showServiceListsButton.setOnClickListener { v: View? ->
+            val intent = Intent(this, MenuActivity::class.java).run {
+                putExtra("PARENT_KEY", "親からのデータです！")
+            }
+            startActivity(intent)
+        }
+
 
         webViewSetup()
         login()
