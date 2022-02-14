@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/TopView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <WebView
+        android:id="@+id/webView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/FooterContents"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </WebView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/FooterContents"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:background="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/webView"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <View
+            android:id="@+id/BorderGrayLine"
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:background="#636262"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/webViewGoBackButton"
+            android:layout_width="60dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="20dp"
+            android:background="#00FFFFFF"
+            android:drawableBottom="?attr/actionModeCloseDrawable"
+            android:drawableTint="#8E8E93"
+            android:textColor="#000000"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/webViewGoForwardButton"
+            android:layout_width="60dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="30dp"
+            android:background="#00FFFFFF"
+            android:drawableBottom="?attr/actionModeCloseDrawable"
+            android:drawableTint="#8E8E91"
+            android:rotationY="180"
+            android:textColor="#000000"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/webViewGoBackButton"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/showServiceListsButton"
+            android:layout_width="60dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="20dp"
+            android:background="#00FFFFFF"
+            android:drawableBottom="@android:drawable/ic_dialog_dialer"
+            android:drawableTint="#8E8E93"
+            android:textColor="#000000"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
