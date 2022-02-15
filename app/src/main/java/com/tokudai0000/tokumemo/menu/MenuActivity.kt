@@ -5,11 +5,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.ListView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.ListAdapter
+import com.tokudai0000.tokumemo.Constant
 import com.tokudai0000.tokumemo.R
 
 class MenuActivity : AppCompatActivity() {
@@ -32,22 +31,16 @@ class MenuActivity : AppCompatActivity() {
     private fun setupListView() {
         listView = findViewById<ListView>(R.id.listView)
 
-        val menuListsTitle = arrayOf(
-                "教務事務システム",
-                "マナバ",
-                "図書貸し出し延長",
-                "パスワード",
-                "このアプリについて",
-                "図書Web[常三島]"
-        )
+        val menuListsTitle = Constant.menuLists
 
-        // simple_list_item_1 は、 もともと用意されている定義済みのレイアウトファイルのID
-        val arrayAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, menuListsTitle)
+        //アダプターにユーザーリストを導入
+        val adapter = ListAdapter(this, Constant.menuLists)
+        
         // ListViewにadapterをセット
-        listView?.adapter = arrayAdapter
+        listView?.adapter = adapter
         // クイックリスナー
         listView?.setOnItemClickListener { parent, view, position, id ->
-            Toast.makeText(this, menuListsTitle[position], Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, Constant.menuLists[position].title, Toast.LENGTH_SHORT).show()
         }
     }
 
