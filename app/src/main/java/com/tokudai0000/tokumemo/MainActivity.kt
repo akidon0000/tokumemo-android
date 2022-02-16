@@ -1,18 +1,40 @@
 package com.tokudai0000.tokumemo
 
+import android.app.Activity
+import android.app.Instrumentation
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
+import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import com.tokudai0000.tokumemo.menu.MenuActivity
 
 class MainActivity : AppCompatActivity() {
 
     private var webView: WebView? = null
-
+    val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+//                if (result?.resultCode == Activity.RESULT_OK) {
+//                    result.data?.let { data: Intent ->
+//                        val value = data.getIntExtra("CHILD_KEY", 0)
+//                        Toast.makeText(this, "$value", Toast.LENGTH_LONG).show()
+//                    }
+//                }
+        // 呼び出し先のActivityを閉じた時に呼び出されるコールバックを登録
+        // (呼び出し先で埋め込んだデータを取り出して処理する)
+        if (result.resultCode == Activity.RESULT_OK) {
+            // RESULT_OK時の処理
+            val resultIntent = result.data
+            val message = resultIntent?.getStringExtra("CHILD_KEY")
+            webView!!.loadUrl(message!!)
+//            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -27,16 +49,26 @@ class MainActivity : AppCompatActivity() {
         webViewGoBackButton.setOnClickListener { v: View? -> webView?.goBack() }
         webViewGoForwardButton.setOnClickListener { v: View? -> webView?.goForward() }
         showServiceListsButton.setOnClickListener { v: View? ->
-            val intent = Intent(this, MenuActivity::class.java).run {
-                putExtra("PARENT_KEY", "親からのデータです！")
-            }
-            startActivity(intent)
-        }
+            val intent = Intent(this, MenuActivity::class.java)
+//            startActivity(intent)
+            startForResult.launch(intent)
 
+        }
 
         webViewSetup()
         login()
+
     }
+
+
+
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        val urlString = data?.getStringExtra("CHILD_KEY")
+//
+//        webView!!.loadUrl(urlString!!)
+//
+//    }
 
     // MARK: - Private func
     // 教務事務システムのみ、別のログイン方法をとっている？ため、初回に教務事務システムにログインし、キャッシュで別のサイトもログインしていく

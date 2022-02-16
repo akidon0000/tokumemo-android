@@ -31,16 +31,22 @@ class MenuActivity : AppCompatActivity() {
     private fun setupListView() {
         listView = findViewById<ListView>(R.id.listView)
 
-        val menuListsTitle = Constant.menuLists
-
         //アダプターにユーザーリストを導入
         val adapter = ListAdapter(this, Constant.menuLists)
-        
         // ListViewにadapterをセット
         listView?.adapter = adapter
         // クイックリスナー
         listView?.setOnItemClickListener { parent, view, position, id ->
-            Toast.makeText(this, Constant.menuLists[position].title, Toast.LENGTH_SHORT).show()
+            val intent = Intent()
+            intent.putExtra("CHILD_KEY", Constant.menuLists[position].url)
+            setResult(Activity.RESULT_OK, intent)
+            finish()
+//            val intent = Intent().run {
+//                putExtra("CHILD_KEY", "test")//Constant.menuLists[position].url)
+//            }
+//            setResult(Activity.RESULT_OK, intent)
+//            finish()
+//            Toast.makeText(this, Constant.menuLists[position].title, Toast.LENGTH_SHORT).show()
         }
     }
 
