@@ -17,6 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.tokudai0000.tokumemo.menu.MenuActivity
 import com.tokudai0000.tokumemo.Constant
 import com.tokudai0000.tokumemo.MenuLists
+import com.tokudai0000.tokumemo.menu.password.PasswordActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,13 +48,16 @@ class MainActivity : AppCompatActivity() {
 
                 }
                 menuID == MenuLists.password.toString() -> {
-
+                    val intent = Intent(this, PasswordActivity::class.java)
+                    startActivity(intent)
+                    Log.d("","password")
                 }
                 menuID == MenuLists.aboutThisApp.toString() -> {
 
                 }
                 else -> {
-                    webView!!.loadUrl(menuUrl!!)
+                    Log.d("","else")
+//                    webView!!.loadUrl(menuUrl!!)
                 }
             }
         }

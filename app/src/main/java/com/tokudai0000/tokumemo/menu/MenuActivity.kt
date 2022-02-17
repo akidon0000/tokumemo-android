@@ -3,6 +3,7 @@ package com.tokudai0000.tokumemo.menu
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.*
@@ -10,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ListAdapter
 import com.tokudai0000.tokumemo.Constant
 import com.tokudai0000.tokumemo.R
+import com.tokudai0000.tokumemo.menu.password.PasswordActivity
 
 class MenuActivity : AppCompatActivity() {
 
@@ -38,7 +40,7 @@ class MenuActivity : AppCompatActivity() {
         // クイックリスナー
         listView?.setOnItemClickListener { parent, view, position, id ->
             val intent = Intent()
-            intent.putExtra("MenuID_KEY", Constant.menuLists[position].id)
+            intent.putExtra("MenuID_KEY", Constant.menuLists[position].id.toString())
             intent.putExtra("MenuUrl_KEY", Constant.menuLists[position].url)
             setResult(Activity.RESULT_OK, intent)
             finish()
