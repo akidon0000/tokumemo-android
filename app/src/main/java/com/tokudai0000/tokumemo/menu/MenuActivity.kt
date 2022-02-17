@@ -38,7 +38,8 @@ class MenuActivity : AppCompatActivity() {
         // クイックリスナー
         listView?.setOnItemClickListener { parent, view, position, id ->
             val intent = Intent()
-            intent.putExtra("CHILD_KEY", Constant.menuLists[position].url)
+            intent.putExtra("MenuID_KEY", Constant.menuLists[position].id)
+            intent.putExtra("MenuUrl_KEY", Constant.menuLists[position].url)
             setResult(Activity.RESULT_OK, intent)
             finish()
         }

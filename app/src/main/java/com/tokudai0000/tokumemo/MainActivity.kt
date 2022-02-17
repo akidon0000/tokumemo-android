@@ -15,27 +15,50 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import com.tokudai0000.tokumemo.menu.MenuActivity
+import com.tokudai0000.tokumemo.Constant
+import com.tokudai0000.tokumemo.MenuLists
 
 class MainActivity : AppCompatActivity() {
 
     private var webView: WebView? = null
-    val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-//                if (result?.resultCode == Activity.RESULT_OK) {
-//                    result.data?.let { data: Intent ->
-//                        val value = data.getIntExtra("CHILD_KEY", 0)
-//                        Toast.makeText(this, "$value", Toast.LENGTH_LONG).show()
-//                    }
-//                }
+
+    private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
         // 呼び出し先のActivityを閉じた時に呼び出されるコールバックを登録
         // (呼び出し先で埋め込んだデータを取り出して処理する)
         if (result.resultCode == Activity.RESULT_OK) {
             // RESULT_OK時の処理
             val resultIntent = result.data
-            val message = resultIntent?.getStringExtra("CHILD_KEY")
-            webView!!.loadUrl(message!!)
-//            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+            val menuID = resultIntent?.getStringExtra("MenuID_KEY")
+            val menuUrl = resultIntent?.getStringExtra("MenuUrl_KEY")
+            when {
+                menuID == MenuLists.currentTermPerformance.toString() -> {
+
+                }
+                menuID == MenuLists.libraryCalendar.toString() -> {
+
+                }
+                menuID == MenuLists.syllabus.toString() -> {
+
+                }
+                menuID == MenuLists.customize.toString() -> {
+
+                }
+                menuID == MenuLists.firstViewSetting.toString() -> {
+
+                }
+                menuID == MenuLists.password.toString() -> {
+
+                }
+                menuID == MenuLists.aboutThisApp.toString() -> {
+
+                }
+                else -> {
+                    webView!!.loadUrl(menuUrl!!)
+                }
+            }
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -51,9 +74,7 @@ class MainActivity : AppCompatActivity() {
         webViewGoForwardButton.setOnClickListener { v: View? -> webView?.goForward() }
         showServiceListsButton.setOnClickListener { v: View? ->
             val intent = Intent(this, MenuActivity::class.java)
-//            startActivity(intent)
             startForResult.launch(intent)
-
         }
 
         webViewSetup()
@@ -61,15 +82,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-
-
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//        val urlString = data?.getStringExtra("CHILD_KEY")
-//
-//        webView!!.loadUrl(urlString!!)
-//
-//    }
 
     // MARK: - Private func
     // 教務事務システムのみ、別のログイン方法をとっている？ため、初回に教務事務システムにログインし、キャッシュで別のサイトもログインしていく
@@ -99,9 +111,6 @@ class MainActivity : AppCompatActivity() {
                 webView!!.evaluateJavascript("document.getElementsByClassName('form-element form-button')[0].click();", null)
             }
         }
-
-
     }
-
 
 }
