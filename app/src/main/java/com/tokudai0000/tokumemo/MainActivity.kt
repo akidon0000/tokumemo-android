@@ -3,6 +3,7 @@ package com.tokudai0000.tokumemo
 import android.app.Activity
 import android.app.Instrumentation
 import android.content.Intent
+import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -77,7 +78,7 @@ class MainActivity : AppCompatActivity() {
 //        DataManager.instance.isExecuteJavascript = true
 //        viewModel.isInitFinishLogin = true
 //        val urlString = getString(R.string.universityTransitionLogin)
-        val urlString = "https://www.tokushima-u.ac.jp/"
+        val urlString = "https://eweb.stud.tokushima-u.ac.jp/Portal/"
         webView!!.loadUrl(urlString)
     }
 
@@ -85,7 +86,20 @@ class MainActivity : AppCompatActivity() {
         // javascriptを有効化
         webView!!.settings.javaScriptEnabled = true
         //ウェブページがクロム（または、その他の検索アプリ）に開かなくてアプリのwebviewに開かるような設定
-        webView!!.webViewClient = object : WebViewClient(){}
+        webView!!.webViewClient = object : WebViewClient(){
+            // MARK: - 読み込み設定（リクエスト前）
+            override fun onPageStarted(view: WebView?, url: String, favicon: Bitmap?) {
+                Log.d("--- ログ --->", "タップされたリンクのurl:$url")
+            }
+
+            // MARK: - 読み込み完了
+            override fun onPageFinished(view: WebView?, urlString: String?) {
+                webView!!.evaluateJavascript("document.getElementById('username').value= '" + "c611821006" + "'", null)
+                webView!!.evaluateJavascript("document.getElementById('password').value= '" + "" + "'", null)
+                webView!!.evaluateJavascript("document.getElementsByClassName('form-element form-button')[0].click();", null)
+            }
+        }
+
 
     }
 

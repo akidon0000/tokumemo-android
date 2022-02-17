@@ -44,7 +44,7 @@ class Constant {
     companion object {
         //ユーザーリストでデーターを追加
         val menuLists = arrayListOf<Menu> (
-                Menu( "教務事務システム", MenuLists.courseManagementHomeMobile, "https://eweb.stud.tokushima-u.ac.jp/Portal/StudentApp/sp/Top.aspx"),
+                Menu( "教務事務システム", MenuLists.courseManagementHomePC, "https://eweb.stud.tokushima-u.ac.jp/Portal/StudentApp/sp/Top.aspx"),
                 Menu( "マナバ", MenuLists.manabaHomePC, "https://manaba.lms.tokushima-u.ac.jp/ct/home"),
                 Menu( "図書貸し出し延長", MenuLists.libraryBookLendingExtension,"https://opac.lib.tokushima-u.ac.jp/opac/user/holding-borrowings"),
                 Menu( "開館カレンダー", MenuLists.libraryCalendar,""),

@@ -41,12 +41,6 @@ class MenuActivity : AppCompatActivity() {
             intent.putExtra("CHILD_KEY", Constant.menuLists[position].url)
             setResult(Activity.RESULT_OK, intent)
             finish()
-//            val intent = Intent().run {
-//                putExtra("CHILD_KEY", "test")//Constant.menuLists[position].url)
-//            }
-//            setResult(Activity.RESULT_OK, intent)
-//            finish()
-//            Toast.makeText(this, Constant.menuLists[position].title, Toast.LENGTH_SHORT).show()
         }
     }
 
