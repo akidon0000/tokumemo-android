@@ -64,7 +64,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/showServiceListsButton"
+            android:id="@+id/showMenuListsButton"
             android:layout_width="60dp"
             android:layout_height="0dp"
             android:layout_marginEnd="20dp"

@@ -95,7 +95,7 @@ class PasswordActivity : AppCompatActivity() {
     }
 
 
-    // 以下、暗号化してデバイスに保存する
+    // 以下、暗号化してデバイスに保存する(MainActivityにも存在するので今後、統一)
     companion object {
         const val PREF_NAME = "encrypted_prefs"
     }
