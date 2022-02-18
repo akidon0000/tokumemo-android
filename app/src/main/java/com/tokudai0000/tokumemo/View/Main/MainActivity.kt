@@ -23,6 +23,8 @@ import com.tokudai0000.tokumemo.View.Menu.Password.PasswordActivity
 class MainActivity : AppCompatActivity() {
 
     private var webView: WebView? = null
+    // ログイン用　アンケート催促が出ないユーザー用
+    public var isInitFinishLogin = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,9 +104,14 @@ class MainActivity : AppCompatActivity() {
         // 次に読み込まれるURLはJavaScriptを動かすことを許可する(ログイン用)
         DataManager.isExecuteJavascript = true
 //        viewModel.isInitFinishLogin = true
-//        val urlString = getString(R.string.universityTransitionLogin)
-        val urlString = "https://eweb.stud.tokushima-u.ac.jp/Portal/"
-        webView?.loadUrl(urlString)
+
+        if (encryptedLoad("KEY_cAccount").isEmpty()) {
+            val urlString = "https://www.tokushima-u.ac.jp/"
+            webView?.loadUrl(urlString)
+        }else{
+            val urlString = "https://eweb.stud.tokushima-u.ac.jp/Portal/"
+            webView?.loadUrl(urlString)
+        }
     }
 
     private fun webViewSetup() {
@@ -124,10 +131,20 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 when {
+
+                    // 大学サービスにログイン完了後、どのページを読み込むか
+                    isFinishLogin(urlString) -> {
+                        // フラグを立てる
+                        DataManager.isExecuteJavascript = true
+                        // 初期設定画面のURLを読み込む
+                        webView?.loadUrl("https://manaba.lms.tokushima-u.ac.jp/ct/home")
+                    }
+
                     // JavaScriptを実行するフラグが立っていない場合は抜ける
                     !DataManager.isExecuteJavascript -> {
 
                     }
+
                     // 大学サイト、ログイン画面 && JavaScriptを動かしcアカウント、パスワードを自動入力する必要があるのか判定
                     urlString.startsWith("https://localidp.ait230.tokushima-u.ac.jp/idp/profile/SAML2/Redirect/SSO?execution=") -> {
                         DataManager.isExecuteJavascript = false
@@ -137,24 +154,43 @@ class MainActivity : AppCompatActivity() {
                         webView?.evaluateJavascript("document.getElementById('password').value= '" + "$password" + "'", null)
                         webView?.evaluateJavascript("document.getElementsByClassName('form-element form-button')[0].click();", null)
                     }
+
                     // シラバス
                     urlString == "http://eweb.stud.tokushima-u.ac.jp/Portal/Public/Syllabus/" -> {
 
                     }
+
                     // outlook(メール) && 登録者判定
                     urlString.startsWith("https://wa.tokushima-u.ac.jp/adfs/ls") -> {
 
                     }
+
                     else -> {
 
                     }
                 }
-
-
-                
-
             }
         }
+    }
+
+    /// 初回ログイン後すぐか判定
+    /// - Parameter urlString: 現在表示しているURL
+    /// - Returns: 判定結果
+    private fun isFinishLogin(urlString: String): Boolean {
+
+        // アンケート催促画面が出た == ログイン後すぐ
+        if (urlString == "https://eweb.stud.tokushima-u.ac.jp/Portal/StudentApp/TopEnqCheck.aspx") {
+            isInitFinishLogin = false
+            return true
+        }
+
+        // モバイル画面かつisInitFinishLoginがtrue つまり　アンケート催促が出ず(アンケート全て完了してるユーザー)そのままモバイル画面へ遷移した人
+        if (urlString.startsWith("https://eweb.stud.tokushima-u.ac.jp/Portal/StudentApp/") && isInitFinishLogin) {
+            isInitFinishLogin = false
+            return true
+        }
+
+        return false
     }
 
     // 以下、暗号化してデバイスに保存する(PasswordActivityにも存在するので今後、統一)
