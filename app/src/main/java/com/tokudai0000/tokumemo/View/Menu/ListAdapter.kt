@@ -1,11 +1,10 @@
-package com.tokudai0000.tokumemo.menu
+package com.tokudai0000.tokumemo.View.Menu
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import android.widget.ListView
 import android.widget.TextView
 import com.tokudai0000.tokumemo.Menu
 import com.tokudai0000.tokumemo.R

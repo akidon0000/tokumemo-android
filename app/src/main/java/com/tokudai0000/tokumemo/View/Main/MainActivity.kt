@@ -1,7 +1,6 @@
-package com.tokudai0000.tokumemo
+package com.tokudai0000.tokumemo.View.Main
 
 import android.app.Activity
-import android.app.Instrumentation
 import android.content.Intent
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
@@ -11,15 +10,14 @@ import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
-import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import com.tokudai0000.tokumemo.menu.MenuActivity
-import com.tokudai0000.tokumemo.Constant
+import com.tokudai0000.tokumemo.View.Menu.MenuActivity
 import com.tokudai0000.tokumemo.MenuLists
-import com.tokudai0000.tokumemo.menu.password.PasswordActivity
+import com.tokudai0000.tokumemo.R
+import com.tokudai0000.tokumemo.View.Menu.Password.PasswordActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -108,20 +106,9 @@ class MainActivity : AppCompatActivity() {
             override fun onPageStarted(view: WebView?, url: String, favicon: Bitmap?) {
                 Log.d("--- ログ --->", "タップされたリンクのurl:$url")
             }
-            val mainKey = MasterKey.Builder(applicationContext)
-                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                .build()
 
-            val prefs = EncryptedSharedPreferences.create(
-                applicationContext,
-                PasswordActivity.PREF_NAME,
-                mainKey,
-                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-            )
-
-            val cAccount = prefs.getString("KEY_cAccount", "Nothing")
-            val password = prefs.getString("KEY_cAccount", "Nothing")
+            val cAccount = encryptedLoad("KEY_cAccount")
+            val password = encryptedLoad("KEY_password")
 
 
             // MARK: - 読み込み完了
@@ -131,6 +118,39 @@ class MainActivity : AppCompatActivity() {
 //                webView!!.evaluateJavascript("document.getElementsByClassName('form-element form-button')[0].click();", null)
             }
         }
+    }
+
+    private fun encryptedSave(KEY: String, text: String) {
+        val mainKey = MasterKey.Builder(applicationContext)
+                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                .build()
+
+        val prefs = EncryptedSharedPreferences.create(
+                applicationContext,
+                PasswordActivity.PREF_NAME,
+                mainKey,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        )
+        with (prefs.edit()) {
+            putString(KEY, text)
+            apply()
+        }
+    }
+
+    private fun encryptedLoad(KEY: String): String {
+        val mainKey = MasterKey.Builder(applicationContext)
+                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                .build()
+
+        val prefs = EncryptedSharedPreferences.create(
+                applicationContext,
+                PasswordActivity.PREF_NAME,
+                mainKey,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        )
+        return prefs.getString(KEY, "")!!
     }
 
 }
