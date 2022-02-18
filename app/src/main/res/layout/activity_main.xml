@@ -5,7 +5,7 @@
     android:id="@+id/TopView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".View.Main.MainActivity">
 
     <WebView
         android:id="@+id/webView"
@@ -64,7 +64,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/showServiceListsButton"
+            android:id="@+id/showMenuListsButton"
             android:layout_width="60dp"
             android:layout_height="0dp"
             android:layout_marginEnd="20dp"

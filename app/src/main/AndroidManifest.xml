@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TokumemoAndroid">
-        <activity android:name=".MainActivity">
+        <activity android:name="com.tokudai0000.tokumemo.View.Main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -18,9 +18,15 @@
         </activity>
 
         <activity
-            android:name=".menu.MenuActivity"
+            android:name="com.tokudai0000.tokumemo.View.Menu.MenuActivity"
             android:theme="@style/Theme.AppCompat.Translucent">
         </activity>
+
+        <activity
+            android:name="com.tokudai0000.tokumemo.View.Menu.Password.PasswordActivity">
+        </activity>
+
+
     </application>
     // webViewの権限を追加
     <uses-permission android:name="android.permission.INTERNET" />
