@@ -13,8 +13,10 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import com.tokudai0000.tokumemo.AKLibrary.guard
 import com.tokudai0000.tokumemo.View.Menu.MenuActivity
 import com.tokudai0000.tokumemo.MenuLists
+import com.tokudai0000.tokumemo.Model.DataManager
 import com.tokudai0000.tokumemo.R
 import com.tokudai0000.tokumemo.View.Menu.Password.PasswordActivity
 
@@ -98,7 +100,7 @@ class MainActivity : AppCompatActivity() {
     // 教務事務システムのみ、別のログイン方法をとっている？ため、初回に教務事務システムにログインし、キャッシュで別のサイトもログインしていく
     private fun login() {
         // 次に読み込まれるURLはJavaScriptを動かすことを許可する(ログイン用)
-//        DataManager.instance.isExecuteJavascript = true
+        DataManager.isExecuteJavascript = true
 //        viewModel.isInitFinishLogin = true
 //        val urlString = getString(R.string.universityTransitionLogin)
         val urlString = "https://eweb.stud.tokushima-u.ac.jp/Portal/"
@@ -117,12 +119,40 @@ class MainActivity : AppCompatActivity() {
 
             // MARK: - 読み込み完了
             override fun onPageFinished(view: WebView?, urlString: String?) {
+                val urlString = guard(urlString) {
+                    throw IllegalStateException("urlStringがnull")
+                }
+
+                when {
+                    // JavaScriptを実行するフラグが立っていない場合は抜ける
+                    !DataManager.isExecuteJavascript -> {
+
+                    }
+                    // 大学サイト、ログイン画面 && JavaScriptを動かしcアカウント、パスワードを自動入力する必要があるのか判定
+                    urlString.startsWith("https://localidp.ait230.tokushima-u.ac.jp/idp/profile/SAML2/Redirect/SSO?execution=") -> {
+                        DataManager.isExecuteJavascript = false
+                        val cAccount = encryptedLoad("KEY_cAccount")
+                        val password = encryptedLoad("KEY_password")
+                        webView?.evaluateJavascript("document.getElementById('username').value= '" + "$cAccount" + "'", null)
+                        webView?.evaluateJavascript("document.getElementById('password').value= '" + "$password" + "'", null)
+                        webView?.evaluateJavascript("document.getElementsByClassName('form-element form-button')[0].click();", null)
+                    }
+                    // シラバス
+                    urlString == "http://eweb.stud.tokushima-u.ac.jp/Portal/Public/Syllabus/" -> {
+
+                    }
+                    // outlook(メール) && 登録者判定
+                    urlString.startsWith("https://wa.tokushima-u.ac.jp/adfs/ls") -> {
+
+                    }
+                    else -> {
+
+                    }
+                }
+
+
                 
-                val cAccount = encryptedLoad("KEY_cAccount")
-                val password = encryptedLoad("KEY_password")
-                webView?.evaluateJavascript("document.getElementById('username').value= '" + "$cAccount" + "'", null)
-                webView?.evaluateJavascript("document.getElementById('password').value= '" + "$password" + "'", null)
-//                webView!!.evaluateJavascript("document.getElementsByClassName('form-element form-button')[0].click();", null)
+
             }
         }
     }
