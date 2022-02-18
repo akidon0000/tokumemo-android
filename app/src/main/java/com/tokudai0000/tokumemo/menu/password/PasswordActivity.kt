@@ -40,11 +40,12 @@ class PasswordActivity : AppCompatActivity() {
 
         // Action
         backButton.setOnClickListener { v: View? ->
-//            finish()
-            // "Input"から読み出す
-//            val str = dataStore.getString("Input", "NoData")
-//
-//            passwordMessageLabel.text = str
+            finish()
+        }
+
+        registerButton.setOnClickListener { v: View? ->
+            val cAccountText = cAccountTextField.text.toString()
+            val passwordText = passwordTextField.text.toString()
 
             val mainKey = MasterKey.Builder(applicationContext)
                     .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
@@ -59,23 +60,11 @@ class PasswordActivity : AppCompatActivity() {
             )
 
             with (prefs.edit()) {
-                putString("foo", "bar")
+                putString("KEY_cAccount", cAccountText)
+                putString("KEY_password", passwordText)
                 apply()
             }
 
-            val savedValue = prefs.getString("foo", "Nothing")
-            Toast.makeText(this, """the saved value of the key "foo" is $savedValue""", Toast.LENGTH_LONG).show()
-
-        }
-
-        registerButton.setOnClickListener { v: View? ->
-//            cAccountTextField.text
-            // 文字列を"Input"に書き込む
-            val editor = dataStore.edit()
-            editor.putString("Input", "文字列")
-
-            //editor.commit();
-            editor.apply()
         }
 
     }

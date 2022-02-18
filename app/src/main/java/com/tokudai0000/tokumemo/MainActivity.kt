@@ -14,6 +14,8 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 import com.tokudai0000.tokumemo.menu.MenuActivity
 import com.tokudai0000.tokumemo.Constant
 import com.tokudai0000.tokumemo.MenuLists
@@ -106,12 +108,27 @@ class MainActivity : AppCompatActivity() {
             override fun onPageStarted(view: WebView?, url: String, favicon: Bitmap?) {
                 Log.d("--- ログ --->", "タップされたリンクのurl:$url")
             }
+            val mainKey = MasterKey.Builder(applicationContext)
+                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                .build()
+
+            val prefs = EncryptedSharedPreferences.create(
+                applicationContext,
+                PasswordActivity.PREF_NAME,
+                mainKey,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            )
+
+            val cAccount = prefs.getString("KEY_cAccount", "Nothing")
+            val password = prefs.getString("KEY_cAccount", "Nothing")
+
 
             // MARK: - 読み込み完了
             override fun onPageFinished(view: WebView?, urlString: String?) {
-                webView!!.evaluateJavascript("document.getElementById('username').value= '" + "c611821006" + "'", null)
-                webView!!.evaluateJavascript("document.getElementById('password').value= '" + "" + "'", null)
-                webView!!.evaluateJavascript("document.getElementsByClassName('form-element form-button')[0].click();", null)
+                webView!!.evaluateJavascript("document.getElementById('username').value= '" + "$cAccount" + "'", null)
+                webView!!.evaluateJavascript("document.getElementById('password').value= '" + "$password" + "'", null)
+//                webView!!.evaluateJavascript("document.getElementsByClassName('form-element form-button')[0].click();", null)
             }
         }
     }
