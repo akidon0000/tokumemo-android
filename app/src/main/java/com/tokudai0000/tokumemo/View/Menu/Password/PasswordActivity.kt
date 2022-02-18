@@ -43,6 +43,8 @@ class PasswordActivity : AppCompatActivity() {
             passwordMessageLabel.text = ""
 
             when {
+                // 入力値が正常なデータか検証
+
                 cAccountText.isEmpty() -> {
                     cAccountMessageLabel.text = "空欄です"
                 }
