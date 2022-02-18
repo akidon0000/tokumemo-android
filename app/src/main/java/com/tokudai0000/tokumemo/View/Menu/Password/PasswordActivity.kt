@@ -1,5 +1,7 @@
 package com.tokudai0000.tokumemo.View.Menu.Password
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,6 +12,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import com.tokudai0000.tokumemo.Constant
 import com.tokudai0000.tokumemo.R
 
 class PasswordActivity : AppCompatActivity() {
@@ -67,6 +70,9 @@ class PasswordActivity : AppCompatActivity() {
                     // 登録
                     encryptedSave("KEY_cAccount", cAccountText)
                     encryptedSave("KEY_password", passwordText)
+                    // MainActivityで再ログインの処理を行わせる
+                    val intent = Intent()
+                    setResult(Activity.RESULT_OK, intent)
                     finish()
                 }
             }
