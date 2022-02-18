@@ -10,12 +10,14 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ListAdapter
 import com.tokudai0000.tokumemo.Constant
+import com.tokudai0000.tokumemo.MainActivity
 import com.tokudai0000.tokumemo.R
 import com.tokudai0000.tokumemo.menu.password.PasswordActivity
 
 class MenuActivity : AppCompatActivity() {
 
     private var listView: ListView? = null
+//    var delegate: MainActivity? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +45,8 @@ class MenuActivity : AppCompatActivity() {
             intent.putExtra("MenuID_KEY", Constant.menuLists[position].id.toString())
             intent.putExtra("MenuUrl_KEY", Constant.menuLists[position].url)
             setResult(Activity.RESULT_OK, intent)
+//            delegate!!.test()
+
             finish()
         }
     }

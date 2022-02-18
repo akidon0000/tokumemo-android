@@ -50,18 +50,17 @@ class MainActivity : AppCompatActivity() {
                 menuID == MenuLists.password.toString() -> {
                     val intent = Intent(this, PasswordActivity::class.java)
                     startActivity(intent)
-                    Log.d("","password")
                 }
                 menuID == MenuLists.aboutThisApp.toString() -> {
 
                 }
                 else -> {
-                    Log.d("","else")
-//                    webView!!.loadUrl(menuUrl!!)
+                    webView!!.loadUrl(menuUrl!!)
                 }
             }
         }
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
