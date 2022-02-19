@@ -3,6 +3,8 @@ package com.tokudai0000.tokumemo.View.Menu.Password
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -18,8 +20,10 @@ class PasswordActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_password)
 
+        //ActionBarに直接タイトルを表記
+        setTitle("パスワード")
         // findViewById
-        val backButton = findViewById<Button>(R.id.backButton)
+
         val registerButton = findViewById<Button>(R.id.registerButton)
 
         val cAccountTextField = findViewById<EditText>(R.id.cAccountTextField)
@@ -30,10 +34,6 @@ class PasswordActivity : AppCompatActivity() {
         val passwordTextSizeLabel = findViewById<TextView>(R.id.passwordTextSizeLabel)
         val passwordMessageLabel = findViewById<TextView>(R.id.passwordMessageLabel)
 
-        // Action
-        backButton.setOnClickListener {
-            finish()
-        }
 
         registerButton.setOnClickListener {
             val cAccountText = cAccountTextField.text.toString()
@@ -94,6 +94,17 @@ class PasswordActivity : AppCompatActivity() {
         passwordTextField.setText(encryptedLoad("KEY_password"))
     }
 
+    //ActionBarにicon追加
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.password_option, menu)
+        return true
+    }
+    //Actionの実行
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        finish()
+        return true
+    }
 
     // 以下、暗号化してデバイスに保存する(MainActivityにも存在するので今後、統一)
     companion object {
