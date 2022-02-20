@@ -9,6 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TokumemoAndroid">
+
         <activity android:name="com.tokudai0000.tokumemo.View.Main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,13 +18,35 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name="com.tokudai0000.tokumemo.View.Menu.MenuActivity"
+        <activity android:name="com.tokudai0000.tokumemo.View.Menu.MenuActivity"
             android:theme="@style/Theme.AppCompat.Translucent">
         </activity>
 
-        <activity
-            android:name="com.tokudai0000.tokumemo.View.Menu.Password.PasswordActivity">
+        <activity android:name="com.tokudai0000.tokumemo.View.Agreement.AgreementActivity">
+        </activity>
+
+        <activity android:name="com.tokudai0000.tokumemo.View.Favorite.FavoriteActivity">
+        </activity>
+
+        <activity android:name="com.tokudai0000.tokumemo.View.Menu.AboutThisApp.AboutThisAppActivity">
+        </activity>
+
+        <activity android:name="com.tokudai0000.tokumemo.View.Menu.Customize.CustomizeActivity">
+        </activity>
+
+        <activity android:name="com.tokudai0000.tokumemo.View.Menu.FirstView.FirstViewActivity">
+        </activity>
+
+        <activity android:name="com.tokudai0000.tokumemo.View.Menu.Password.PasswordActivity">
+        </activity>
+
+        <activity android:name="com.tokudai0000.tokumemo.View.Menu.Syllabus.SyllabusActivity">
+        </activity>
+
+        <activity android:name="com.tokudai0000.tokumemo.View.PrivacyPolicy.PrivacyPolicyActivity">
+        </activity>
+
+        <activity android:name="com.tokudai0000.tokumemo.View.TermsOfService.TermsOfServiceActivity">
         </activity>
 
 

@@ -9,18 +9,34 @@ import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import com.tokudai0000.tokumemo.AKLibrary.guard
+import com.tokudai0000.tokumemo.Constant
+import com.tokudai0000.tokumemo.Menu
 import com.tokudai0000.tokumemo.View.Menu.MenuActivity
 import com.tokudai0000.tokumemo.MenuLists
+import com.tokudai0000.tokumemo.Model.DataManager
 import com.tokudai0000.tokumemo.R
 import com.tokudai0000.tokumemo.View.Menu.Password.PasswordActivity
+import com.tokudai0000.tokumemo.View.Menu.Syllabus.SyllabusActivity
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
     private var webView: WebView? = null
+    // ログイン用　アンケート催促が出ないユーザー用
+    public var isInitFinishLogin = true
+
+    // シラバスをJavaScriptで自動入力する際、参照変数
+    public var subjectName = ""
+    public var teacherName = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,33 +77,71 @@ class MainActivity : AppCompatActivity() {
             val menuUrl = resultIntent?.getStringExtra("MenuUrl_KEY")
             when {
                 menuID == MenuLists.currentTermPerformance.toString() -> {
+                    // 2020年4月〜2021年3月までの成績は https ... Results_Get_YearTerm.aspx?year=2020
+                    // 2021年4月〜2022年3月までの成績は https ... Results_Get_YearTerm.aspx?year=2021
 
+                    // 現在時刻の取得
+                    // Dateを作成すると現在日時が入るし、CalenderをgetInstanceでも現在日時が入る
+                    val calendar: Calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"), Locale.JAPAN);
+                    var year: Int = calendar.get(Calendar.YEAR)
+                    val month: Int = calendar.get(Calendar.MONTH) + 1 // 1月が0、12月が11であることに注意
+
+                    // 1月から3月までは前年の成績
+                    if (month <= 3) {
+                        year -= 1
+                    }
+                    val urlString = "https://eweb.stud.tokushima-u.ac.jp/Portal/StudentApp/Sp/ReferResults/SubDetail/Results_Get_YearTerm.aspx?year=" + "${year.toString()}"
+                    webView?.loadUrl(urlString)
                 }
+
                 menuID == MenuLists.libraryCalendar.toString() -> {
 
                 }
-                menuID == MenuLists.syllabus.toString() -> {
 
+                menuID == MenuLists.syllabus.toString() -> {
+                    val intent = Intent(this, SyllabusActivity::class.java)
+                    startForSyllabusActivity.launch(intent)
                 }
+
                 menuID == MenuLists.customize.toString() -> {
 
                 }
+
                 menuID == MenuLists.firstViewSetting.toString() -> {
 
                 }
+
                 menuID == MenuLists.password.toString() -> {
                     val intent = Intent(this, PasswordActivity::class.java)
-                    startForPasswordActivity.launch(intent)
+                    startForSyllabusActivity.launch(intent)
                 }
+
                 menuID == MenuLists.aboutThisApp.toString() -> {
 
                 }
+
                 else -> {
                     webView?.loadUrl(menuUrl!!) // URLが無い場合は上記で除けているので強制アンラップ
                 }
             }
         }
     }
+
+    // 子(PasswordActivity)で登録ボタンを押した場合、再度ログイン処理を行う(backButtonではログイン処理を行わない)
+    private val startForSyllabusActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        if (result.resultCode == Activity.RESULT_OK) {
+
+            DataManager.isExecuteJavascript = true
+
+            // RESULT_OK時の処理
+            val resultIntent = result.data
+            // シラバスをJavaScriptで自動入力する際、参照変数
+            subjectName = guard(resultIntent?.getStringExtra("Subject_KEY")) {} // nilの場合は代入しないだけ
+            teacherName = guard(resultIntent?.getStringExtra("Teacher_KEY")) {}
+            webView?.loadUrl("http://eweb.stud.tokushima-u.ac.jp/Portal/Public/Syllabus/")
+        }
+    }
+
     // 子(PasswordActivity)で登録ボタンを押した場合、再度ログイン処理を行う(backButtonではログイン処理を行わない)
     private val startForPasswordActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -98,11 +152,16 @@ class MainActivity : AppCompatActivity() {
     // 教務事務システムのみ、別のログイン方法をとっている？ため、初回に教務事務システムにログインし、キャッシュで別のサイトもログインしていく
     private fun login() {
         // 次に読み込まれるURLはJavaScriptを動かすことを許可する(ログイン用)
-//        DataManager.instance.isExecuteJavascript = true
+        DataManager.isExecuteJavascript = true
 //        viewModel.isInitFinishLogin = true
-//        val urlString = getString(R.string.universityTransitionLogin)
-        val urlString = "https://eweb.stud.tokushima-u.ac.jp/Portal/"
-        webView?.loadUrl(urlString)
+        // 登録者か非登録者か判定
+        if (encryptedLoad("KEY_cAccount").isEmpty()) {
+            val urlString = "https://www.tokushima-u.ac.jp/"
+            webView?.loadUrl(urlString)
+        }else{
+            val urlString = "https://eweb.stud.tokushima-u.ac.jp/Portal/"
+            webView?.loadUrl(urlString)
+        }
     }
 
     private fun webViewSetup() {
@@ -117,14 +176,105 @@ class MainActivity : AppCompatActivity() {
 
             // MARK: - 読み込み完了
             override fun onPageFinished(view: WebView?, urlString: String?) {
-                
+                val urlString = guard(urlString) {
+                    throw IllegalStateException("urlStringがnull")
+                }
+
                 val cAccount = encryptedLoad("KEY_cAccount")
                 val password = encryptedLoad("KEY_password")
-                webView?.evaluateJavascript("document.getElementById('username').value= '" + "$cAccount" + "'", null)
-                webView?.evaluateJavascript("document.getElementById('password').value= '" + "$password" + "'", null)
-//                webView!!.evaluateJavascript("document.getElementsByClassName('form-element form-button')[0].click();", null)
+
+                when {
+
+                    // 大学サービスにログイン完了後、どのページを読み込むか
+                    isFinishLogin(urlString) -> {
+                        // フラグを立てる
+                        DataManager.isExecuteJavascript = true
+                        // 初期設定画面のURLを読み込む
+                        for (menuList in Constant.menuLists) {
+                            // ユーザーが指定した初期画面を探す
+                            if (menuList.isInitView) {
+                                // メニューリストの内1つだけ、isInitView=trueが存在する
+                                val urlString = menuList.url.toString()
+                                webView?.loadUrl(urlString)
+                            }
+                        }
+                    }
+
+                    // JavaScriptを実行するフラグが立っていない場合は抜ける
+                    !DataManager.isExecuteJavascript -> {
+
+                    }
+
+                    // 大学サイト、ログイン画面 && JavaScriptを動かしcアカウント、パスワードを自動入力する必要があるのか判定
+                    urlString.startsWith("https://localidp.ait230.tokushima-u.ac.jp/idp/profile/SAML2/Redirect/SSO?execution=") -> {
+                        webView?.evaluateJavascript("document.getElementById('username').value= '" + "$cAccount" + "'", null)
+                        webView?.evaluateJavascript("document.getElementById('password').value= '" + "$password" + "'", null)
+                        webView?.evaluateJavascript("document.getElementsByClassName('form-element form-button')[0].click();", null)
+                        // フラグを下ろす
+                        DataManager.isExecuteJavascript = false
+                    }
+
+                    // シラバス
+                    urlString == "http://eweb.stud.tokushima-u.ac.jp/Portal/Public/Syllabus/" -> {
+                        // シラバスの検索画面
+                        // ネイティブでの検索内容をWebに反映したのち、検索を行う
+                        webView?.evaluateJavascript("document.getElementById('ctl00_phContents_txt_sbj_Search').value= '" + "$subjectName" + "'", null)
+//                        webView?.evaluateJavascript("document.getElementById('ctl00_phContents_txt_sbj_Search').value=" + "test", null)
+                        webView?.evaluateJavascript("document.getElementById('ctl00_phContents_txt_staff_Search').value= '" + "$teacherName" + "'", null)
+//                        webView?.evaluateJavascript("document.getElementById('ctl00_phContents_ctl06_btnSearch').click();", null)
+                        // フラグを下ろす
+                        DataManager.isExecuteJavascript = false
+                    }
+
+                    // outlook(メール) && 登録者判定
+                    urlString.startsWith("https://wa.tokushima-u.ac.jp/adfs/ls") -> {
+                        // outlook(メール)へのログイン画面
+                        // cアカウントを登録していなければ自動ログインは効果がないため
+                        // 自動ログインを行う
+                        webView?.evaluateJavascript("document.getElementById('userNameInput').value= '" + "$cAccount" + "@tokushima-u.ac.jp'", null)
+                        webView?.evaluateJavascript("document.getElementById('passwordInput').value= '" + "$password" + "'", null)
+                        webView?.evaluateJavascript("document.getElementById('submitButton').click();", null)
+                        // フラグを下ろす
+                        DataManager.isExecuteJavascript = false
+                    }
+
+                    // キャリア支援室
+                    urlString.startsWith("https://www.tokudai-syusyoku.com/index.php") -> {
+                        // 徳島大学キャリアセンター室
+                        // 自動入力を行う(cアカウントは同じ、パスワードは異なる可能性あり)
+                        // ログインボタンは自動にしない(キャリアセンターと大学パスワードは人によるが同じではないから)
+                        webView?.evaluateJavascript("document.getElementsByName('user_id')[0].value= '" + "$cAccount" + "'", null)
+                        webView?.evaluateJavascript("document.getElementsByName('user_password')[0].value= '" + "$password" + "'", null)
+                        // フラグを下ろす
+                        DataManager.isExecuteJavascript = false
+                    }
+
+                    else -> {
+
+                    }
+                }
             }
         }
+    }
+
+    /// 初回ログイン後すぐか判定
+    /// - Parameter urlString: 現在表示しているURL
+    /// - Returns: 判定結果
+    private fun isFinishLogin(urlString: String): Boolean {
+
+        // アンケート催促画面が出た == ログイン後すぐ
+        if (urlString == "https://eweb.stud.tokushima-u.ac.jp/Portal/StudentApp/TopEnqCheck.aspx") {
+            isInitFinishLogin = false
+            return true
+        }
+
+        // モバイル画面かつisInitFinishLoginがtrue つまり　アンケート催促が出ず(アンケート全て完了してるユーザー)そのままモバイル画面へ遷移した人
+        if (urlString.startsWith("https://eweb.stud.tokushima-u.ac.jp/Portal/StudentApp/") && isInitFinishLogin) {
+            isInitFinishLogin = false
+            return true
+        }
+
+        return false
     }
 
     // 以下、暗号化してデバイスに保存する(PasswordActivityにも存在するので今後、統一)
