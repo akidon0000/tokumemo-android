@@ -14,6 +14,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.tokudai0000.tokumemo.AKLibrary.guard
+import com.tokudai0000.tokumemo.Constant
+import com.tokudai0000.tokumemo.Menu
 import com.tokudai0000.tokumemo.View.Menu.MenuActivity
 import com.tokudai0000.tokumemo.MenuLists
 import com.tokudai0000.tokumemo.Model.DataManager
@@ -104,7 +106,7 @@ class MainActivity : AppCompatActivity() {
         // 次に読み込まれるURLはJavaScriptを動かすことを許可する(ログイン用)
         DataManager.isExecuteJavascript = true
 //        viewModel.isInitFinishLogin = true
-
+        // 登録者か非登録者か判定
         if (encryptedLoad("KEY_cAccount").isEmpty()) {
             val urlString = "https://www.tokushima-u.ac.jp/"
             webView?.loadUrl(urlString)
@@ -140,7 +142,14 @@ class MainActivity : AppCompatActivity() {
                         // フラグを立てる
                         DataManager.isExecuteJavascript = true
                         // 初期設定画面のURLを読み込む
-                        webView?.loadUrl("https://manaba.lms.tokushima-u.ac.jp/ct/home")
+                        for (menuList in Constant.menuLists) {
+                            // ユーザーが指定した初期画面を探す
+                            if (menuList.isInitView) {
+                                // メニューリストの内1つだけ、isInitView=trueが存在する
+                                val urlString = menuList.url.toString()
+                                webView?.loadUrl(urlString)
+                            }
+                        }
                     }
 
                     // JavaScriptを実行するフラグが立っていない場合は抜ける
