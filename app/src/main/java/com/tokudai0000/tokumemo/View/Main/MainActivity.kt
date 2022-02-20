@@ -130,6 +130,9 @@ class MainActivity : AppCompatActivity() {
                     throw IllegalStateException("urlStringがnull")
                 }
 
+                val cAccount = encryptedLoad("KEY_cAccount")
+                val password = encryptedLoad("KEY_password")
+
                 when {
 
                     // 大学サービスにログイン完了後、どのページを読み込むか
@@ -147,22 +150,45 @@ class MainActivity : AppCompatActivity() {
 
                     // 大学サイト、ログイン画面 && JavaScriptを動かしcアカウント、パスワードを自動入力する必要があるのか判定
                     urlString.startsWith("https://localidp.ait230.tokushima-u.ac.jp/idp/profile/SAML2/Redirect/SSO?execution=") -> {
-                        DataManager.isExecuteJavascript = false
-                        val cAccount = encryptedLoad("KEY_cAccount")
-                        val password = encryptedLoad("KEY_password")
                         webView?.evaluateJavascript("document.getElementById('username').value= '" + "$cAccount" + "'", null)
                         webView?.evaluateJavascript("document.getElementById('password').value= '" + "$password" + "'", null)
                         webView?.evaluateJavascript("document.getElementsByClassName('form-element form-button')[0].click();", null)
+                        // フラグを下ろす
+                        DataManager.isExecuteJavascript = false
                     }
 
                     // シラバス
                     urlString == "http://eweb.stud.tokushima-u.ac.jp/Portal/Public/Syllabus/" -> {
-
+                        // シラバスの検索画面
+                        // ネイティブでの検索内容をWebに反映したのち、検索を行う
+//                        webView?.evaluateJavascript("document.getElementById('ctl00_phContents_txt_sbj_Search').value=" + "viewModel.subjectName", null)
+//                        webView?.evaluateJavascript("document.getElementById('ctl00_phContents_txt_staff_Search').value=" + "viewModel.teacherName", null)
+//                        webView?.evaluateJavascript("document.getElementById('ctl00_phContents_ctl06_btnSearch').click();", null)
+                        // フラグを下ろす
+                        DataManager.isExecuteJavascript = false
                     }
 
                     // outlook(メール) && 登録者判定
                     urlString.startsWith("https://wa.tokushima-u.ac.jp/adfs/ls") -> {
+                        // outlook(メール)へのログイン画面
+                        // cアカウントを登録していなければ自動ログインは効果がないため
+                        // 自動ログインを行う
+                        webView?.evaluateJavascript("document.getElementById('userNameInput').value= '" + "$cAccount" + "@tokushima-u.ac.jp'", null)
+                        webView?.evaluateJavascript("document.getElementById('passwordInput').value= '" + "$password" + "'", null)
+                        webView?.evaluateJavascript("document.getElementById('submitButton').click();", null)
+                        // フラグを下ろす
+                        DataManager.isExecuteJavascript = false
+                    }
 
+                    // outlook(メール) && 登録者判定
+                    urlString.startsWith("https://wa.tokushima-u.ac.jp/adfs/ls") -> {
+                        // 徳島大学キャリアセンター室
+                        // 自動入力を行う(cアカウントは同じ、パスワードは異なる可能性あり)
+                        // ログインボタンは自動にしない(キャリアセンターと大学パスワードは人によるが同じではないから)
+                        webView?.evaluateJavascript("document.getElementsByName('user_id')[0].value= '" + "$cAccount" + "'", null)
+                        webView?.evaluateJavascript("document.getElementsByName('user_password')[0].value= '" + "$password" + "'", null)
+                        // フラグを下ろす
+                        DataManager.isExecuteJavascript = false
                     }
 
                     else -> {
