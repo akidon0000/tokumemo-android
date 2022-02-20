@@ -215,8 +215,8 @@ class MainActivity : AppCompatActivity() {
                         DataManager.isExecuteJavascript = false
                     }
 
-                    // outlook(メール) && 登録者判定
-                    urlString.startsWith("https://wa.tokushima-u.ac.jp/adfs/ls") -> {
+                    // キャリア支援室
+                    urlString.startsWith("https://www.tokudai-syusyoku.com/index.php") -> {
                         // 徳島大学キャリアセンター室
                         // 自動入力を行う(cアカウントは同じ、パスワードは異なる可能性あり)
                         // ログインボタンは自動にしない(キャリアセンターと大学パスワードは人によるが同じではないから)
