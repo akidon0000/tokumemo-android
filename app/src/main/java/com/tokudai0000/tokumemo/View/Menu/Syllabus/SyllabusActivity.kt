@@ -35,6 +35,31 @@ class SyllabusActivity : AppCompatActivity() {
         }
 
         searchButton.setOnClickListener {
+            val subjectText = subjectTextField.text.toString()
+            val teacherText = teacherTextField.text.toString()
+
+            subjectMessageLabel.text = "" // 初期値に戻す
+            teacherMessageLabel.text = ""
+
+            when {
+                // 入力値が正常なデータか検証
+
+                subjectText.length > 20 -> {
+                    subjectMessageLabel.text = "エラー"
+                }
+
+                teacherText.length > 20 -> {
+                    teacherMessageLabel.text = "エラー"
+                }
+
+                else -> {
+                    val intent = Intent()
+                    intent.putExtra("Subject_KEY", subjectText)
+                    intent.putExtra("Teacher_KEY", teacherText)
+                    setResult(Activity.RESULT_OK, intent)
+                    finish()
+                }
+            }
         }
 
         // 入力文字数のカウント、そして表示を行う

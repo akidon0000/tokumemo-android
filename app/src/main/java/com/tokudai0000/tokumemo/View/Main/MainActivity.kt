@@ -22,6 +22,7 @@ import com.tokudai0000.tokumemo.MenuLists
 import com.tokudai0000.tokumemo.Model.DataManager
 import com.tokudai0000.tokumemo.R
 import com.tokudai0000.tokumemo.View.Menu.Password.PasswordActivity
+import com.tokudai0000.tokumemo.View.Menu.Syllabus.SyllabusActivity
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -32,6 +33,10 @@ class MainActivity : AppCompatActivity() {
     private var webView: WebView? = null
     // ログイン用　アンケート催促が出ないユーザー用
     public var isInitFinishLogin = true
+
+    // シラバスをJavaScriptで自動入力する際、参照変数
+    public var subjectName = ""
+    public var teacherName = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,7 +99,8 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 menuID == MenuLists.syllabus.toString() -> {
-
+                    val intent = Intent(this, SyllabusActivity::class.java)
+                    startForSyllabusActivity.launch(intent)
                 }
 
                 menuID == MenuLists.customize.toString() -> {
@@ -107,7 +113,7 @@ class MainActivity : AppCompatActivity() {
 
                 menuID == MenuLists.password.toString() -> {
                     val intent = Intent(this, PasswordActivity::class.java)
-                    startForPasswordActivity.launch(intent)
+                    startForSyllabusActivity.launch(intent)
                 }
 
                 menuID == MenuLists.aboutThisApp.toString() -> {
@@ -120,6 +126,22 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    // 子(PasswordActivity)で登録ボタンを押した場合、再度ログイン処理を行う(backButtonではログイン処理を行わない)
+    private val startForSyllabusActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        if (result.resultCode == Activity.RESULT_OK) {
+
+            DataManager.isExecuteJavascript = true
+
+            // RESULT_OK時の処理
+            val resultIntent = result.data
+            // シラバスをJavaScriptで自動入力する際、参照変数
+            subjectName = guard(resultIntent?.getStringExtra("Subject_KEY")) {} // nilの場合は代入しないだけ
+            teacherName = guard(resultIntent?.getStringExtra("Teacher_KEY")) {}
+            webView?.loadUrl("http://eweb.stud.tokushima-u.ac.jp/Portal/Public/Syllabus/")
+        }
+    }
+
     // 子(PasswordActivity)で登録ボタンを押した場合、再度ログイン処理を行う(backButtonではログイン処理を行わない)
     private val startForPasswordActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -196,8 +218,9 @@ class MainActivity : AppCompatActivity() {
                     urlString == "http://eweb.stud.tokushima-u.ac.jp/Portal/Public/Syllabus/" -> {
                         // シラバスの検索画面
                         // ネイティブでの検索内容をWebに反映したのち、検索を行う
-//                        webView?.evaluateJavascript("document.getElementById('ctl00_phContents_txt_sbj_Search').value=" + "viewModel.subjectName", null)
-//                        webView?.evaluateJavascript("document.getElementById('ctl00_phContents_txt_staff_Search').value=" + "viewModel.teacherName", null)
+                        webView?.evaluateJavascript("document.getElementById('ctl00_phContents_txt_sbj_Search').value= '" + "$subjectName" + "'", null)
+//                        webView?.evaluateJavascript("document.getElementById('ctl00_phContents_txt_sbj_Search').value=" + "test", null)
+                        webView?.evaluateJavascript("document.getElementById('ctl00_phContents_txt_staff_Search').value= '" + "$teacherName" + "'", null)
 //                        webView?.evaluateJavascript("document.getElementById('ctl00_phContents_ctl06_btnSearch').click();", null)
                         // フラグを下ろす
                         DataManager.isExecuteJavascript = false

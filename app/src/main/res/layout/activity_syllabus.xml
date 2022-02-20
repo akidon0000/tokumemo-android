@@ -27,8 +27,7 @@
         android:layout_width="0dp"
         android:layout_height="40dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintStart_toStartOf="parent">
 
         <Button
             android:id="@+id/backButton"
@@ -90,7 +89,7 @@
             android:inputType="textPersonName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cAccount" />
+            app:layout_constraintTop_toBottomOf="@+id/subject" />
 
         <TextView
             android:id="@+id/subjectMessageLabel"
@@ -106,13 +105,13 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/teacherLayout"
         android:layout_width="0dp"
-        android:layout_height="94dp"
+        android:layout_height="115dp"
         android:layout_marginStart="25dp"
         android:layout_marginTop="50dp"
         android:layout_marginEnd="25dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cAccountLayout">
+        app:layout_constraintTop_toBottomOf="@+id/subjectLayout">
 
         <TextView
             android:id="@+id/teacher"
