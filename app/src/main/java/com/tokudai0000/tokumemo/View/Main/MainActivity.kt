@@ -32,11 +32,11 @@ class MainActivity : AppCompatActivity() {
 
     private var webView: WebView? = null
     // ログイン用　アンケート催促が出ないユーザー用
-    public var isInitFinishLogin = true
+    private var isInitFinishLogin = true
 
     // シラバスをJavaScriptで自動入力する際、参照変数
-    public var subjectName = ""
-    public var teacherName = ""
+    private var subjectName = ""
+    private var teacherName = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
