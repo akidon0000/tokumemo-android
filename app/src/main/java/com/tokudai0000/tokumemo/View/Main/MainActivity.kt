@@ -32,11 +32,11 @@ class MainActivity : AppCompatActivity() {
 
     private var webView: WebView? = null
     // ログイン用　アンケート催促が出ないユーザー用
-    public var isInitFinishLogin = true
+    private var isInitFinishLogin = true
 
     // シラバスをJavaScriptで自動入力する際、参照変数
-    public var subjectName = ""
-    public var teacherName = ""
+    private var subjectName = ""
+    private var teacherName = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,9 +116,9 @@ class MainActivity : AppCompatActivity() {
                     startForSyllabusActivity.launch(intent)
                 }
 
-                menuID == MenuLists.aboutThisApp.toString() -> {
-
-                }
+//                menuID == MenuLists.aboutThisApp.toString() -> {
+//
+//                }
 
                 else -> {
                     webView?.loadUrl(menuUrl!!) // URLが無い場合は上記で除けているので強制アンラップ
@@ -219,9 +219,11 @@ class MainActivity : AppCompatActivity() {
                         // シラバスの検索画面
                         // ネイティブでの検索内容をWebに反映したのち、検索を行う
                         webView?.evaluateJavascript("document.getElementById('ctl00_phContents_txt_sbj_Search').value= '" + "$subjectName" + "'", null)
-//                        webView?.evaluateJavascript("document.getElementById('ctl00_phContents_txt_sbj_Search').value=" + "test", null)
                         webView?.evaluateJavascript("document.getElementById('ctl00_phContents_txt_staff_Search').value= '" + "$teacherName" + "'", null)
-//                        webView?.evaluateJavascript("document.getElementById('ctl00_phContents_ctl06_btnSearch').click();", null)
+                        webView?.evaluateJavascript("document.getElementById('ctl00_phContents_ctl06_btnSearch').click();", null)
+
+                        subjectName = "" // 初期化
+                        teacherName = ""
                         // フラグを下ろす
                         DataManager.isExecuteJavascript = false
                     }

@@ -110,20 +110,20 @@ class Constant {
             Menu( "カスタマイズ",
                 MenuLists.customize,
                 "",
-                true,
+                false,
                 false,
                 false),
 
             Menu( "初期画面設定",
                 MenuLists.firstViewSetting,
                 "",
-                true,
+                false,
                 false,
                 false),
 
             Menu( "このアプリについて",
                 MenuLists.aboutThisApp,
-                "",
+                "https://github.com/tokudai0000/univIP/blob/main/terms/TokumemoExplanation.txt",
                 true,
                 false,
                 false),
@@ -229,7 +229,7 @@ class Constant {
             Menu("大学サイト",
                 MenuLists.universityWeb,
                 "https://www.tokushima-u.ac.jp/",
-                false,
+                true,
                 false,
                 true)
         )

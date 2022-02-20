@@ -7,9 +7,12 @@ import android.view.MotionEvent
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.tokudai0000.tokumemo.Constant
+import com.tokudai0000.tokumemo.Menu
 import com.tokudai0000.tokumemo.R
 
 class MenuActivity : AppCompatActivity() {
+
+    var menuLists = arrayListOf<Menu>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,14 +25,19 @@ class MenuActivity : AppCompatActivity() {
         listView?.setOnItemClickListener { parent, view, position, id ->
             // 親(MainActivity)にどのセルがタップされたのかを伝える
             val intent = Intent()
-            intent.putExtra("MenuID_KEY", Constant.menuLists[position].id.toString())
-            intent.putExtra("MenuUrl_KEY", Constant.menuLists[position].url)
+            intent.putExtra("MenuID_KEY", menuLists[position].id.toString())
+            intent.putExtra("MenuUrl_KEY", menuLists[position].url)
             setResult(Activity.RESULT_OK, intent)
             finish()
         }
 
         // ListViewに表示する内容をセット
-        listView?.adapter = ListAdapter(this, Constant.menuLists)
+        for (lists in Constant.menuLists) {
+            if (lists.isDisplay) {
+                menuLists.add(lists)
+            }
+        }
+        listView?.adapter = ListAdapter(this, menuLists)
     }
 
     // メニュー外をタップされた時、MainActivityに戻る
