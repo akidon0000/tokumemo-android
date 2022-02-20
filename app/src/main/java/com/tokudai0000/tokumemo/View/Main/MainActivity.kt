@@ -9,6 +9,7 @@ import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.security.crypto.EncryptedSharedPreferences
@@ -21,6 +22,10 @@ import com.tokudai0000.tokumemo.MenuLists
 import com.tokudai0000.tokumemo.Model.DataManager
 import com.tokudai0000.tokumemo.R
 import com.tokudai0000.tokumemo.View.Menu.Password.PasswordActivity
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -67,27 +72,48 @@ class MainActivity : AppCompatActivity() {
             val menuUrl = resultIntent?.getStringExtra("MenuUrl_KEY")
             when {
                 menuID == MenuLists.currentTermPerformance.toString() -> {
+                    // 2020年4月〜2021年3月までの成績は https ... Results_Get_YearTerm.aspx?year=2020
+                    // 2021年4月〜2022年3月までの成績は https ... Results_Get_YearTerm.aspx?year=2021
 
+                    // 現在時刻の取得
+                    // Dateを作成すると現在日時が入るし、CalenderをgetInstanceでも現在日時が入る
+                    val calendar: Calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"), Locale.JAPAN);
+                    var year: Int = calendar.get(Calendar.YEAR)
+                    val month: Int = calendar.get(Calendar.MONTH) + 1 // 1月が0、12月が11であることに注意
+
+                    // 1月から3月までは前年の成績
+                    if (month <= 3) {
+                        year -= 1
+                    }
+                    val urlString = "https://eweb.stud.tokushima-u.ac.jp/Portal/StudentApp/Sp/ReferResults/SubDetail/Results_Get_YearTerm.aspx?year=" + "${year.toString()}"
+                    webView?.loadUrl(urlString)
                 }
+
                 menuID == MenuLists.libraryCalendar.toString() -> {
 
                 }
+
                 menuID == MenuLists.syllabus.toString() -> {
 
                 }
+
                 menuID == MenuLists.customize.toString() -> {
 
                 }
+
                 menuID == MenuLists.firstViewSetting.toString() -> {
 
                 }
+
                 menuID == MenuLists.password.toString() -> {
                     val intent = Intent(this, PasswordActivity::class.java)
                     startForPasswordActivity.launch(intent)
                 }
+
                 menuID == MenuLists.aboutThisApp.toString() -> {
 
                 }
+
                 else -> {
                     webView?.loadUrl(menuUrl!!) // URLが無い場合は上記で除けているので強制アンラップ
                 }
