@@ -116,9 +116,9 @@ class MainActivity : AppCompatActivity() {
                     startForSyllabusActivity.launch(intent)
                 }
 
-                menuID == MenuLists.aboutThisApp.toString() -> {
-
-                }
+//                menuID == MenuLists.aboutThisApp.toString() -> {
+//
+//                }
 
                 else -> {
                     webView?.loadUrl(menuUrl!!) // URLが無い場合は上記で除けているので強制アンラップ
