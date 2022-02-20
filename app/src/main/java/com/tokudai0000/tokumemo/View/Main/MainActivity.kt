@@ -219,9 +219,11 @@ class MainActivity : AppCompatActivity() {
                         // シラバスの検索画面
                         // ネイティブでの検索内容をWebに反映したのち、検索を行う
                         webView?.evaluateJavascript("document.getElementById('ctl00_phContents_txt_sbj_Search').value= '" + "$subjectName" + "'", null)
-//                        webView?.evaluateJavascript("document.getElementById('ctl00_phContents_txt_sbj_Search').value=" + "test", null)
                         webView?.evaluateJavascript("document.getElementById('ctl00_phContents_txt_staff_Search').value= '" + "$teacherName" + "'", null)
-//                        webView?.evaluateJavascript("document.getElementById('ctl00_phContents_ctl06_btnSearch').click();", null)
+                        webView?.evaluateJavascript("document.getElementById('ctl00_phContents_ctl06_btnSearch').click();", null)
+
+                        subjectName = "" // 初期化
+                        teacherName = ""
                         // フラグを下ろす
                         DataManager.isExecuteJavascript = false
                     }
