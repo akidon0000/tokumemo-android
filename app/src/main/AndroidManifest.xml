@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TokumemoAndroid">
 
-        <activity android:name="com.tokudai0000.tokumemo.View.Main.MainActivity">
+        <activity android:name="com.tokudai0000.tokumemo.ui.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -18,35 +18,35 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.tokudai0000.tokumemo.View.Menu.MenuActivity"
+        <activity android:name="com.tokudai0000.tokumemo.ui.menu.MenuActivity"
             android:theme="@style/Theme.AppCompat.Translucent">
         </activity>
 
-        <activity android:name="com.tokudai0000.tokumemo.View.Agreement.AgreementActivity">
+        <activity android:name="com.tokudai0000.tokumemo.ui.agreement.AgreementActivity">
         </activity>
 
-        <activity android:name="com.tokudai0000.tokumemo.View.Favorite.FavoriteActivity">
+        <activity android:name="com.tokudai0000.tokumemo.ui.favorite.FavoriteActivity">
         </activity>
 
-        <activity android:name="com.tokudai0000.tokumemo.View.Menu.AboutThisApp.AboutThisAppActivity">
+        <activity android:name="com.tokudai0000.tokumemo.ui.menu.AboutThisApp.AboutThisAppActivity">
         </activity>
 
-        <activity android:name="com.tokudai0000.tokumemo.View.Menu.Customize.CustomizeActivity">
+        <activity android:name="com.tokudai0000.tokumemo.ui.menu.Customize.CustomizeActivity">
         </activity>
 
-        <activity android:name="com.tokudai0000.tokumemo.View.Menu.FirstView.FirstViewActivity">
+        <activity android:name="com.tokudai0000.tokumemo.ui.menu.FirstView.FirstViewActivity">
         </activity>
 
-        <activity android:name="com.tokudai0000.tokumemo.View.Menu.Password.PasswordActivity">
+        <activity android:name="com.tokudai0000.tokumemo.ui.menu.Password.PasswordActivity">
         </activity>
 
-        <activity android:name="com.tokudai0000.tokumemo.View.Menu.Syllabus.SyllabusActivity">
+        <activity android:name="com.tokudai0000.tokumemo.ui.menu.Syllabus.SyllabusActivity">
         </activity>
 
-        <activity android:name="com.tokudai0000.tokumemo.View.PrivacyPolicy.PrivacyPolicyActivity">
+        <activity android:name="com.tokudai0000.tokumemo.ui.privacyPolicy.PrivacyPolicyActivity">
         </activity>
 
-        <activity android:name="com.tokudai0000.tokumemo.View.TermsOfService.TermsOfServiceActivity">
+        <activity android:name="com.tokudai0000.tokumemo.ui.termsOfService.TermsOfServiceActivity">
         </activity>
 
 

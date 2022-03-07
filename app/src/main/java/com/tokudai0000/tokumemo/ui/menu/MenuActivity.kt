@@ -1,4 +1,4 @@
-package com.tokudai0000.tokumemo.View.Menu
+package com.tokudai0000.tokumemo.ui.menu
 
 import android.app.Activity
 import android.content.Intent

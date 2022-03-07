@@ -1,4 +1,4 @@
-package com.tokudai0000.tokumemo.View.Main
+package com.tokudai0000.tokumemo.ui.main
 
 import android.app.Activity
 import android.content.Intent
@@ -9,23 +9,18 @@ import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
-import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.tokudai0000.tokumemo.AKLibrary.guard
 import com.tokudai0000.tokumemo.Constant
-import com.tokudai0000.tokumemo.Menu
-import com.tokudai0000.tokumemo.View.Menu.MenuActivity
+import com.tokudai0000.tokumemo.ui.menu.MenuActivity
 import com.tokudai0000.tokumemo.MenuLists
 import com.tokudai0000.tokumemo.Model.DataManager
 import com.tokudai0000.tokumemo.R
-import com.tokudai0000.tokumemo.View.Menu.Password.PasswordActivity
-import com.tokudai0000.tokumemo.View.Menu.Syllabus.SyllabusActivity
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.time.LocalDate
+import com.tokudai0000.tokumemo.ui.menu.Password.PasswordActivity
+import com.tokudai0000.tokumemo.ui.menu.Syllabus.SyllabusActivity
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -40,8 +35,21 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
 
+        configureMainActivity()
+
+        // WebViewの初期設定を行う
+        webViewSetup()
+
+        // パスワード登録者、非登録者によって表示するURLを変更する
+        login()
+
+    }
+
+    // Private
+    private fun configureMainActivity() {
         // Outlet
         webView = findViewById<WebView>(R.id.webView)
         val webViewGoBackButton = findViewById<Button>(R.id.webViewGoBackButton)
@@ -55,17 +63,8 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, MenuActivity::class.java)
             startForMenuActivity.launch(intent)
         }
-
-        // WebViewの初期設定を行う
-        webViewSetup()
-
-        // パスワード登録者、非登録者によって表示するURLを変更する
-        login()
-
     }
 
-
-    // Private
     // 子(MenuActivity)から戻ってきた時、データを子から受けとり処理を行う
     private val startForMenuActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
         // 呼び出し先のActivityを閉じた時に呼び出されるコールバックを登録

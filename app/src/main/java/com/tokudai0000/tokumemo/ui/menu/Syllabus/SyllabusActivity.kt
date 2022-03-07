@@ -1,4 +1,4 @@
-package com.tokudai0000.tokumemo.View.Menu.Syllabus
+package com.tokudai0000.tokumemo.ui.menu.Syllabus
 
 import android.app.Activity
 import android.content.Intent
