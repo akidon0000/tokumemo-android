@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity() {
 
                 menuID == MenuLists.password.toString() -> {
                     val intent = Intent(this, PasswordActivity::class.java)
-                    startForSyllabusActivity.launch(intent)
+                    startForPasswordActivity.launch(intent)
                 }
 
 //                menuID == MenuLists.aboutThisApp.toString() -> {
