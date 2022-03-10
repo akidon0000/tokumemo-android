@@ -11,6 +11,7 @@ import android.webkit.WebViewClient
 import android.widget.Button
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.ViewModelProviders
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.tokudai0000.tokumemo.AKLibrary.guard
@@ -33,9 +34,10 @@ class MainActivity : AppCompatActivity() {
     private var subjectName = ""
     private var teacherName = ""
 
+    private val viewModel: MainModel = ViewModelProviders.of(this).get(MainModel::class.java)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_main)
 
         configureMainActivity()
