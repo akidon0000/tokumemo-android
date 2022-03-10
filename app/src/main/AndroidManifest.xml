@@ -10,7 +10,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TokumemoAndroid">
 
-        <activity android:name="com.tokudai0000.tokumemo.ui.main.MainActivity">
+        <activity android:name="com.tokudai0000.tokumemo.ui.main.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -11,15 +11,15 @@ android {
         applicationId "com.tokudai0000.tokumemo"
         minSdkVersion 23
         targetSdkVersion 32
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "0.0.99(2)"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            debuggable true
+            debuggable false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
