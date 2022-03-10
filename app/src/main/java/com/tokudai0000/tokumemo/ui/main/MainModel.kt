@@ -5,49 +5,42 @@ import androidx.lifecycle.ViewModel
 class MainModel: ViewModel() {
 
     /// Favorite画面へURLを渡すのに使用
-    public var urlString = ""
+//    public var urlString = ""
 
     /// シラバスをJavaScriptで自動入力する際、参照変数
-    public var subjectName = ""
-    public var teacherName = ""
+//    public var subjectName = ""
+//    public var teacherName = ""
 
     /// ログイン処理中かどうか
-    public var isLoginProcessing = false
+//    public var isLoginProcessing = false
 
     /// 最新の利用規約同意者か判定し、同意画面の表示を行うべきか判定
-    public var shouldShowTermsAgreementView: Bool {
-        get { return dataManager.agreementVersion != Constant.latestTermsVersion }
-    }
+//    public val shouldShowTermsAgreementView: Boolean = dataManager.agreementVersion != Constant.latestTermsVersion
 
     /// URLの読み込みを許可するか判定
     /// ドメイン名が許可しているのと一致しているなら許可(ホワイトリスト制)
     /// - Parameter url: 判定したいURL
     /// - Returns: 判定結果、許可ならtrue
-    public func isAllowedDomainCheck(_ url: URL) -> Bool {
-        // ドメイン名を取得
-        val domain = guard(url.host) {
-            AKLog(level: .ERROR, message: "[Domain取得エラー] \n url:\(url)")
-            return false
-        }
-        
-        // ドメインを検証
-        for item in Constant.allowedDomains {
-            if domain.contains(item) {
-                // 一致したなら
-                return true
-            }
-        }
-        return false
-    }
+//    public fun isAllowedDomainCheck(urlString: String): Boolean {
+//
+//        // ドメインを検証
+//        for (item in Constant.allowedDomains) {
+//            if (urlString.startsWith(item)) {
+//                // 一致したなら
+//                return true
+//            }
+//        }
+//        return false
+//    }
 
     /// JavaScriptを動かす種類
-    enum JavaScriptType {
-        case syllabus // シラバスの検索画面
-        case loginIAS // 大学統合認証システム(IAS)のログイン画面
-        case loginOutlook // メール(Outlook)のログイン画面
-        case loginCareerCenter // 徳島大学キャリアセンターのログイン画面
-        case none // JavaScriptを動かす必要がない場合
-    }
+//    enum class JavaScriptType {
+//        syllabus, // シラバスの検索画面
+//        loginIAS, // 大学統合認証システム(IAS)のログイン画面
+//        loginOutlook, // メール(Outlook)のログイン画面
+//        loginCareerCenter, // 徳島大学キャリアセンターのログイン画面
+//        none, // JavaScriptを動かす必要がない場合
+//    }
     /// JavaScriptを動かしたい指定のURLかどうかを判定し、動かすJavaScriptの種類を返す
     ///
     /// - Note: canExecuteJavascriptが重要な理由
@@ -55,34 +48,34 @@ class MainModel: ViewModel() {
     ///   canExecuteJavascriptが存在しないと、再度ログインの為にJavaScriptが実行され続け無限ループとなってしまう。
     /// - Parameter urlString: 読み込み完了したURLの文字列
     /// - Returns: 動かすJavaScriptの種類
-    public func anyJavaScriptExecute(_ urlString: String) -> JavaScriptType {
-        // JavaScriptを実行するフラグが立っていない場合はnoneを返す
-        if dataManager.canExecuteJavascript == false {
-            return .none
-        }
-        // シラバスの検索画面
-        if urlString == Url.syllabus.string() {
-            return .syllabus
-        }
-        // cアカウント、パスワードを登録しているか
-        if hasRegisteredPassword == false {
-            return .none
-        }
-        // 大学統合認証システム(IAS)のログイン画面
-        if urlString.contains(Url.universityLogin.string()) {
-            return .loginIAS
-        }
-        // メール(Outlook)のログイン画面
-        if urlString.contains(Url.outlookLoginForm.string()) {
-            return .loginOutlook
-        }
-        // 徳島大学キャリアセンターのログイン画面
-        if urlString == Url.tokudaiCareerCenter.string() {
-            return .loginCareerCenter
-        }
-        // それ以外なら
-        return .none
-    }
+//    public fun anyJavaScriptExecute(urlString: String): JavaScriptType {
+//        // JavaScriptを実行するフラグが立っていない場合はnoneを返す
+//        if (dataManager.canExecuteJavascript == false) {
+//            return JavaScriptType.none
+//        }
+//        // シラバスの検索画面
+//        if (urlString == Url.syllabus.string()) {
+//            return JavaScriptType.syllabus
+//        }
+//        // cアカウント、パスワードを登録しているか
+//        if (hasRegisteredPassword == false) {
+//            return JavaScriptType.none
+//        }
+//        // 大学統合認証システム(IAS)のログイン画面
+//        if (urlString.contains(Url.universityLogin.string()) {
+//            return JavaScriptType.loginIAS
+//        }
+//        // メール(Outlook)のログイン画面
+//        if (urlString.contains(Url.outlookLoginForm.string()) {
+//            return JavaScriptType.loginOutlook
+//        }
+//        // 徳島大学キャリアセンターのログイン画面
+//        if (urlString == Url.tokudaiCareerCenter.string()) {
+//            return JavaScriptType.loginCareerCenter
+//        }
+//        // それ以外なら
+//        return JavaScriptType.none
+//    }
 
     /// 初期画面に指定したWebページのURLを返す
     ///
@@ -92,22 +85,22 @@ class MainModel: ViewModel() {
     /// - Note:
     ///   isInitViewは以下の1つの事例を除き、必ずtrueは存在する。
     ///   1. お気に入り登録内容を初期設定画面に登録し、カスタマイズから削除した場合
-    /// - Returns: 設定した初期画面のURLRequest
-    public func searchInitPageUrl() -> URLRequest {
-        // メニューリストの内1つだけ、isInitView=trueが存在するので探す
-        for menuList in dataManager.menuLists {
-            // 初期画面を探す
-            if menuList.isInitView,
-            let urlString = menuList.url,
-            let url = URL(string: urlString) {
-            return URLRequest(url: url)
-        }
-        }
-        // 見つからなかった場合
-        // お気に入り画面を初期画面に設定しており、カスタマイズから削除した可能性がある為
-        // マナバを表示させる
-        return Url.manabaPC.urlRequest()
-    }
+    /// - Returns: 設定した初期画面のURLの文字列
+//    public fun searchInitPageUrl(): String {
+//        // メニューリストの内1つだけ、isInitView=trueが存在するので探す
+//        for menuList in dataManager.menuLists {
+//            // 初期画面を探す
+//            if (menuList.isInitView,
+//            val urlString = menuList.url,
+//            val url = URL(string: urlString)) {
+//                return URLRequest(url: url)
+//            }
+//        }
+//        // 見つからなかった場合
+//        // お気に入り画面を初期画面に設定しており、カスタマイズから削除した可能性がある為
+//        // マナバを表示させる
+//        return Url.manabaPC.urlRequest()
+//    }
 
     /// 大学統合認証システム(IAS)へのログインが完了したかどうか
     ///
@@ -118,72 +111,71 @@ class MainModel: ViewModel() {
     /// - Note:
     /// - Parameter urlString: 現在表示しているURLString
     /// - Returns: 判定結果、許可ならtrue
-    /// hadLoggedin
-    public func isLoggedin(_ urlString: String) -> Bool {
-        // ログイン後のURLが指定したURLと一致しているかどうか
-        let check1 = urlString.contains(Url.questionnaireReminder.string())
-        let check2 = urlString.contains(Url.courseManagementPC.string())
-        let check3 = urlString.contains(Url.courseManagementMobile.string())
-        // 上記から1つでもtrueがあれば、引き継ぐ
-        let result = check1 || check2 || check3
-                // ログイン処理中かつ、ログインURLと異なっている場合(URLが同じ場合はログイン失敗した状態)
-                if isLoginProcessing, result {
-            // ログイン処理を完了とする
-            isLoginProcessing = false
-            return true
-        }
-        return false
-    }
+//    public fun isLoggedin(urlString: String): Boolean {
+//        // ログイン後のURLが指定したURLと一致しているかどうか
+//        val check1 = urlString.contains(Url.questionnaireReminder.string())
+//        val check2 = urlString.contains(Url.courseManagementPC.string())
+//        val check3 = urlString.contains(Url.courseManagementMobile.string())
+//        // 上記から1つでもtrueがあれば、引き継ぐ
+//        val result = check1 || check2 || check3
+//        // ログイン処理中かつ、ログインURLと異なっている場合(URLが同じ場合はログイン失敗した状態)
+//        if (isLoginProcessing, result) {
+//            // ログイン処理を完了とする
+//            isLoginProcessing = false
+//            return true
+//        }
+//        return false
+//    }
 
     /// 現在の時刻を保存する
-    public func saveCurrentTime() {
-        // 現在の時刻を取得し保存
-        let f = DateFormatter()
-        f.setTemplate(.full)
-        let now = Date()
-        dataManager.setUserDefaultsString(key: KEY_saveCurrentTime, value: f.string(from: now))
-    }
+//    public func saveCurrentTime() {
+//        // 現在の時刻を取得し保存
+//        let f = DateFormatter()
+//        f.setTemplate(.full)
+//        let now = Date()
+//        dataManager.setUserDefaultsString(key: KEY_saveCurrentTime, value: f.string(from: now))
+//    }
 
     /// 再度ログイン処理を行うかどうか
     ///
     /// - Returns: 判定結果、行うべきならtrue
-    public func isExecuteLogin() -> Bool {
-
-        let formatter: DateFormatter = DateFormatter()
-        formatter.dateFormat = "MM/dd/yyyy, HH:mm:ss"
-        let lastTime = formatter.date(from: dataManager.getUserDefaultsString(key: KEY_saveCurrentTime))
-        guard let lastTime = lastTime else {
-            return false
-        }
-
-        // 現在の時刻を取得
-        let now = Date()
-        print(now.timeIntervalSince(lastTime))
-        // 時刻の差分が30*60秒以上であれば再ログインを行う
-        if now.timeIntervalSince(lastTime) > 30 * 60 {
-            return true
-        }
-        return false
-    }
+//    public fun isExecuteLogin(): Boolean {
+//
+//        let formatter: DateFormatter = DateFormatter()
+//        formatter.dateFormat = "MM/dd/yyyy, HH:mm:ss"
+//        let lastTime = formatter.date(from: dataManager.getUserDefaultsString(key: KEY_saveCurrentTime))
+//        guard let lastTime = lastTime else {
+//            return false
+//        }
+//
+//        // 現在の時刻を取得
+//        let now = Date()
+//        print(now.timeIntervalSince(lastTime))
+//        // 時刻の差分が30*60秒以上であれば再ログインを行う
+//        if now.timeIntervalSince(lastTime) > 30 * 60 {
+//            return true
+//        }
+//        return false
+//    }
 
     /// タイムアウトのURLであるかどうかの判定
     /// - Parameter urlString: 読み込み完了したURLの文字列
     /// - Returns: 結果
-    public func isTimeout(_ urlString: String) -> Bool {
-        if urlString == Url.universityServiceTimeOut.string() ||
-                urlString == Url.universityServiceTimeOut2.string() {
-            return true
-        }
-        return false
-    }
+//    public fun isTimeout(urlString: String): Boolean {
+//        if (urlString == Url.universityServiceTimeOut.string() ||
+//                urlString == Url.universityServiceTimeOut2.string()) {
+//            return true
+//        }
+//        return false
+//    }
 
     // MARK: - Private
 
-    private let dataManager = DataManager.singleton
+//    private val dataManager = DataManager.singleton
 
     // cアカウント、パスワードを登録しているか判定
-    private var hasRegisteredPassword: Bool { get { return !(dataManager.cAccount.isEmpty || dataManager.password.isEmpty) }}
+//    private var hasRegisteredPassword: Boolean { get { return !(dataManager.cAccount.isEmpty || dataManager.password.isEmpty) }}
 
     // 前回利用した時間を保存
-    private let KEY_saveCurrentTime = "KEY_saveCurrentTime"
+//    private val KEY_saveCurrentTime = "KEY_saveCurrentTime"
 }
