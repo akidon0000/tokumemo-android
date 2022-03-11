@@ -12,7 +12,7 @@ class MainModel: ViewModel() {
     public var teacherName = ""
 
     /// ログイン処理中かどうか
-//    public var isLoginProcessing = false
+    public var isLoginProcessing = false
 
     /// 最新の利用規約同意者か判定し、同意画面の表示を行うべきか判定
 //    public val shouldShowTermsAgreementView: Boolean = dataManager.agreementVersion != Constant.latestTermsVersion
@@ -111,21 +111,21 @@ class MainModel: ViewModel() {
     /// - Note:
     /// - Parameter urlString: 現在表示しているURLString
     /// - Returns: 判定結果、許可ならtrue
-//    public fun isLoggedin(urlString: String): Boolean {
-//        // ログイン後のURLが指定したURLと一致しているかどうか
-//        val check1 = urlString.contains(Url.questionnaireReminder.string())
-//        val check2 = urlString.contains(Url.courseManagementPC.string())
-//        val check3 = urlString.contains(Url.courseManagementMobile.string())
-//        // 上記から1つでもtrueがあれば、引き継ぐ
-//        val result = check1 || check2 || check3
-//        // ログイン処理中かつ、ログインURLと異なっている場合(URLが同じ場合はログイン失敗した状態)
-//        if (isLoginProcessing, result) {
-//            // ログイン処理を完了とする
-//            isLoginProcessing = false
-//            return true
-//        }
-//        return false
-//    }
+    public fun isLoggedin(urlString: String): Boolean {
+        // ログイン後のURLが指定したURLと一致しているかどうか
+        val check1 = urlString.contains("https://eweb.stud.tokushima-u.ac.jp/Portal/StudentApp/TopEnqCheck.aspx")
+        val check2 = urlString.contains("https://eweb.stud.tokushima-u.ac.jp/Portal/StudentApp/Top.aspx")
+        val check3 = urlString.contains("https://eweb.stud.tokushima-u.ac.jp/Portal/StudentApp/sp/Top.aspx")
+        // 上記から1つでもtrueがあれば、引き継ぐ
+        val result = check1 || check2 || check3
+        // ログイン処理中かつ、ログインURLと異なっている場合(URLが同じ場合はログイン失敗した状態)
+        if (isLoginProcessing && result) {
+            // ログイン処理を完了とする
+            isLoginProcessing = false
+            return true
+        }
+        return false
+    }
 
     /// 現在の時刻を保存する
 //    public func saveCurrentTime() {

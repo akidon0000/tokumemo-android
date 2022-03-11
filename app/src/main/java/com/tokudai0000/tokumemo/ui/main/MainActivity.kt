@@ -22,7 +22,6 @@ import com.tokudai0000.tokumemo.Model.DataManager
 import com.tokudai0000.tokumemo.R
 import com.tokudai0000.tokumemo.ui.menu.Password.PasswordActivity
 import com.tokudai0000.tokumemo.ui.menu.Syllabus.SyllabusActivity
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -42,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         webViewSetup()
 
         // パスワード登録者、非登録者によって表示するURLを変更する
-        login()
+        loadLoginPage()
 
     }
 
@@ -67,10 +66,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     // 子(MenuActivity)から戻ってきた時、データを子から受けとり処理を行う
+    // backButtonではここは通らない
     private val startForMenuActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
         if (result.resultCode != Activity.RESULT_OK) {
-
+            throw Exception("[ERROR]: MenuActivityからMainActivityへの遷移時エラー")
         }
+
         // 呼び出し先のActivityを閉じた時に呼び出されるコールバックを登録
         // (呼び出し先で埋め込んだデータを取り出して処理する)
         // RESULT_OK時の処理
@@ -113,41 +114,39 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // 子(PasswordActivity)で登録ボタンを押した場合、再度ログイン処理を行う(backButtonではログイン処理を行わない)
+    // 子(SyllabusActivity)で検索ボタンを押した場合、検索処理を行う
+    // backButtonではここは通らない
     private val startForSyllabusActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-        if (result.resultCode == Activity.RESULT_OK) {
-
-            DataManager.canExecuteJavascript = true
-
-            // RESULT_OK時の処理
-            val resultIntent = result.data
-            // シラバスをJavaScriptで自動入力する際、参照変数
-            viewModel!!.subjectName = guard(resultIntent?.getStringExtra("Subject_KEY")) {} // nilの場合は代入しないだけ
-            viewModel!!.teacherName = guard(resultIntent?.getStringExtra("Teacher_KEY")) {}
-            webView?.loadUrl("http://eweb.stud.tokushima-u.ac.jp/Portal/Public/Syllabus/")
+        if (result.resultCode != Activity.RESULT_OK) {
+            throw Exception("[ERROR]: PasswordActivityからMainActivityへの遷移時エラー")
         }
+
+        DataManager.canExecuteJavascript = true
+
+        // RESULT_OK時の処理
+        val resultIntent = result.data
+        // シラバスをJavaScriptで自動入力する際、参照変数
+        viewModel!!.subjectName = guard(resultIntent?.getStringExtra("Subject_KEY")) {} // nilの場合は代入しないだけ
+        viewModel!!.teacherName = guard(resultIntent?.getStringExtra("Teacher_KEY")) {}
+        webView!!.loadUrl("http://eweb.stud.tokushima-u.ac.jp/Portal/Public/Syllabus/")
     }
 
-    // 子(PasswordActivity)で登録ボタンを押した場合、再度ログイン処理を行う(backButtonではログイン処理を行わない)
+    // 子(PasswordActivity)で登録ボタンを押した場合、再度ログイン処理を行う
+    // backButtonではここは通らない
     private val startForPasswordActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            login()
+        if (result.resultCode != Activity.RESULT_OK) {
+            throw Exception("[ERROR]: PasswordActivityからMainActivityへの遷移時エラー")
         }
+        // ログイン処理を行う
+        loadLoginPage()
     }
 
     // 教務事務システムのみ、別のログイン方法をとっている？ため、初回に教務事務システムにログインし、キャッシュで別のサイトもログインしていく
-    private fun login() {
+    private fun loadLoginPage() {
         // 次に読み込まれるURLはJavaScriptを動かすことを許可する(ログイン用)
         DataManager.canExecuteJavascript = true
-//        viewModel.isInitFinishLogin = true
-        // 登録者か非登録者か判定
-        if (encryptedLoad("KEY_cAccount").isEmpty()) {
-            val urlString = "https://www.tokushima-u.ac.jp/"
-            webView?.loadUrl(urlString)
-        }else{
-            val urlString = "https://eweb.stud.tokushima-u.ac.jp/Portal/"
-            webView?.loadUrl(urlString)
-        }
+        val urlString = "https://eweb.stud.tokushima-u.ac.jp/Portal/"
+        webView!!.loadUrl(urlString)
     }
 
     private fun webViewSetup() {
@@ -172,7 +171,7 @@ class MainActivity : AppCompatActivity() {
                 when {
 
                     // 大学サービスにログイン完了後、どのページを読み込むか
-                    isFinishLogin(urlString) -> {
+                    viewModel!!.isLoggedin(urlString) -> {
                         // フラグを立てる
                         DataManager.canExecuteJavascript = true
                         // 初期設定画面のURLを読み込む
@@ -245,25 +244,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /// 初回ログイン後すぐか判定
-    /// - Parameter urlString: 現在表示しているURL
-    /// - Returns: 判定結果
-    private fun isFinishLogin(urlString: String): Boolean {
-
-        // アンケート催促画面が出た == ログイン後すぐ
-        if (urlString == "https://eweb.stud.tokushima-u.ac.jp/Portal/StudentApp/TopEnqCheck.aspx") {
-            isInitFinishLogin = false
-            return true
-        }
-
-        // モバイル画面かつisInitFinishLoginがtrue つまり　アンケート催促が出ず(アンケート全て完了してるユーザー)そのままモバイル画面へ遷移した人
-        if (urlString.startsWith("https://eweb.stud.tokushima-u.ac.jp/Portal/StudentApp/") && isInitFinishLogin) {
-            isInitFinishLogin = false
-            return true
-        }
-
-        return false
-    }
+//    /// 初回ログイン後すぐか判定
+//    /// - Parameter urlString: 現在表示しているURL
+//    /// - Returns: 判定結果
+//    private fun isFinishLogin(urlString: String): Boolean {
+//
+//        // アンケート催促画面が出た == ログイン後すぐ
+//        if (urlString == "https://eweb.stud.tokushima-u.ac.jp/Portal/StudentApp/TopEnqCheck.aspx") {
+//            isInitFinishLogin = false
+//            return true
+//        }
+//
+//        // モバイル画面かつisInitFinishLoginがtrue つまり　アンケート催促が出ず(アンケート全て完了してるユーザー)そのままモバイル画面へ遷移した人
+//        if (urlString.startsWith("https://eweb.stud.tokushima-u.ac.jp/Portal/StudentApp/") && isInitFinishLogin) {
+//            isInitFinishLogin = false
+//            return true
+//        }
+//
+//        return false
+//    }
 
     // 以下、暗号化してデバイスに保存する(PasswordActivityにも存在するので今後、統一)
     companion object {
