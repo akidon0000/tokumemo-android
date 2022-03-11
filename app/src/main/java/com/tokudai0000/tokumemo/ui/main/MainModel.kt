@@ -2,6 +2,7 @@ package com.tokudai0000.tokumemo.ui.main
 
 import androidx.lifecycle.ViewModel
 import com.tokudai0000.tokumemo.Constant
+import com.tokudai0000.tokumemo.Model.DataManager
 
 class MainModel: ViewModel() {
 
@@ -37,13 +38,13 @@ class MainModel: ViewModel() {
     }
 
     /// JavaScriptを動かす種類
-//    enum class JavaScriptType {
-//        syllabus, // シラバスの検索画面
-//        loginIAS, // 大学統合認証システム(IAS)のログイン画面
-//        loginOutlook, // メール(Outlook)のログイン画面
-//        loginCareerCenter, // 徳島大学キャリアセンターのログイン画面
-//        none, // JavaScriptを動かす必要がない場合
-//    }
+    enum class JavaScriptType {
+        syllabus, // シラバスの検索画面
+        loginIAS, // 大学統合認証システム(IAS)のログイン画面
+        loginOutlook, // メール(Outlook)のログイン画面
+        loginCareerCenter, // 徳島大学キャリアセンターのログイン画面
+        none, // JavaScriptを動かす必要がない場合
+    }
     /// JavaScriptを動かしたい指定のURLかどうかを判定し、動かすJavaScriptの種類を返す
     ///
     /// - Note: canExecuteJavascriptが重要な理由
@@ -51,34 +52,34 @@ class MainModel: ViewModel() {
     ///   canExecuteJavascriptが存在しないと、再度ログインの為にJavaScriptが実行され続け無限ループとなってしまう。
     /// - Parameter urlString: 読み込み完了したURLの文字列
     /// - Returns: 動かすJavaScriptの種類
-//    public fun anyJavaScriptExecute(urlString: String): JavaScriptType {
-//        // JavaScriptを実行するフラグが立っていない場合はnoneを返す
-//        if (dataManager.canExecuteJavascript == false) {
-//            return JavaScriptType.none
-//        }
-//        // シラバスの検索画面
-//        if (urlString == Url.syllabus.string()) {
-//            return JavaScriptType.syllabus
-//        }
-//        // cアカウント、パスワードを登録しているか
+    public fun anyJavaScriptExecute(urlString: String): JavaScriptType {
+        // JavaScriptを実行するフラグが立っていない場合はnoneを返す
+        if (DataManager.canExecuteJavascript == false) {
+            return JavaScriptType.none
+        }
+        // シラバスの検索画面
+        if (urlString == "http://eweb.stud.tokushima-u.ac.jp/Portal/Public/Syllabus/") {
+            return JavaScriptType.syllabus
+        }
+        // cアカウント、パスワードを登録しているか
 //        if (hasRegisteredPassword == false) {
 //            return JavaScriptType.none
 //        }
-//        // 大学統合認証システム(IAS)のログイン画面
-//        if (urlString.contains(Url.universityLogin.string()) {
-//            return JavaScriptType.loginIAS
-//        }
-//        // メール(Outlook)のログイン画面
-//        if (urlString.contains(Url.outlookLoginForm.string()) {
-//            return JavaScriptType.loginOutlook
-//        }
-//        // 徳島大学キャリアセンターのログイン画面
-//        if (urlString == Url.tokudaiCareerCenter.string()) {
-//            return JavaScriptType.loginCareerCenter
-//        }
-//        // それ以外なら
-//        return JavaScriptType.none
-//    }
+        // 大学統合認証システム(IAS)のログイン画面
+        if (urlString.startsWith("https://localidp.ait230.tokushima-u.ac.jp/idp/profile/SAML2/Redirect/SSO?execution=", 0)) {
+            return JavaScriptType.loginIAS
+        }
+        // メール(Outlook)のログイン画面
+        if (urlString.startsWith("https://wa.tokushima-u.ac.jp/adfs/ls", 0)) {
+            return JavaScriptType.loginOutlook
+        }
+        // 徳島大学キャリアセンターのログイン画面
+        if (urlString == "https://www.tokudai-syusyoku.com/index.php") {
+            return JavaScriptType.loginCareerCenter
+        }
+        // それ以外なら
+        return JavaScriptType.none
+    }
 
     /// 初期画面に指定したWebページのURLを返す
     ///
@@ -176,7 +177,7 @@ class MainModel: ViewModel() {
 //    private val dataManager = DataManager.singleton
 
     // cアカウント、パスワードを登録しているか判定
-//    private var hasRegisteredPassword: Boolean { get { return !(dataManager.cAccount.isEmpty || dataManager.password.isEmpty) }}
+//    private val hasRegisteredPassword: Boolean = (!(dataManager.cAccount.isEmpty || dataManager.password.isEmpty))
 
     // 前回利用した時間を保存
 //    private val KEY_saveCurrentTime = "KEY_saveCurrentTime"

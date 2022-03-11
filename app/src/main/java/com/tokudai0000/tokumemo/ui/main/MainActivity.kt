@@ -35,10 +35,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        initActivitySetup()
+        
         // WebViewの初期設定を行う
         webViewSetup()
 
-        initActivitySetup()
     }
 
     // Private func
@@ -185,10 +186,14 @@ class MainActivity : AppCompatActivity() {
                 return
             }
 
-            // MARK: - 読み込み完了
+            /// 読み込み完了
+            ///
+            /// 主に以下2つのことを処理する
+            ///  1. 大学統合認証システムのログイン処理が終了した場合、ユーザが設定した初期画面を読み込む
+            ///  2. JavaScriptを動かしたいURLかどうかを判定し、必要なら動かす
             override fun onPageFinished(view: WebView?, urlString: String?) {
                 val urlString = guard(urlString) {
-                    throw IllegalStateException("urlStringがnull")
+                    throw Exception("[ERROR]: urlStringがnull")
                 }
 
                 val cAccount = encryptedLoad("KEY_cAccount")
@@ -202,24 +207,22 @@ class MainActivity : AppCompatActivity() {
                     webView!!.loadUrl(viewModel!!.searchInitPageUrl())
                 }
 
-                when {
+                // JavaScriptを動かしたいURLかどうかを判定し、必要なら動かす
+                when (viewModel!!.anyJavaScriptExecute(urlString)) {
 
-                    // JavaScriptを実行するフラグが立っていない場合は抜ける
-                    !DataManager.canExecuteJavascript -> {
-
-                    }
-
-                    // 大学サイト、ログイン画面 && JavaScriptを動かしcアカウント、パスワードを自動入力する必要があるのか判定
-                    urlString.startsWith("https://localidp.ait230.tokushima-u.ac.jp/idp/profile/SAML2/Redirect/SSO?execution=") -> {
+                    MainModel.JavaScriptType.loginIAS -> {
+                        // 徳島大学　統合認証システムサイト(ログインサイト)
+                        // 自動ログインを行う
                         webView?.evaluateJavascript("document.getElementById('username').value= '" + "$cAccount" + "'", null)
                         webView?.evaluateJavascript("document.getElementById('password').value= '" + "$password" + "'", null)
                         webView?.evaluateJavascript("document.getElementsByClassName('form-element form-button')[0].click();", null)
                         // フラグを下ろす
                         DataManager.canExecuteJavascript = false
+                        // ログイン処理中であるフラグを立てる
+                        viewModel!!.isLoginProcessing = true
                     }
 
-                    // シラバス
-                    urlString == "http://eweb.stud.tokushima-u.ac.jp/Portal/Public/Syllabus/" -> {
+                    MainModel.JavaScriptType.syllabus -> {
                         // シラバスの検索画面
                         // ネイティブでの検索内容をWebに反映したのち、検索を行う
                         webView?.evaluateJavascript("document.getElementById('ctl00_phContents_txt_sbj_Search').value= '" + "${viewModel!!.subjectName}" + "'", null)
@@ -232,8 +235,7 @@ class MainActivity : AppCompatActivity() {
                         DataManager.canExecuteJavascript = false
                     }
 
-                    // outlook(メール) && 登録者判定
-                    urlString.startsWith("https://wa.tokushima-u.ac.jp/adfs/ls") -> {
+                    MainModel.JavaScriptType.loginOutlook -> {
                         // outlook(メール)へのログイン画面
                         // cアカウントを登録していなければ自動ログインは効果がないため
                         // 自動ログインを行う
@@ -244,8 +246,7 @@ class MainActivity : AppCompatActivity() {
                         DataManager.canExecuteJavascript = false
                     }
 
-                    // キャリア支援室
-                    urlString.startsWith("https://www.tokudai-syusyoku.com/index.php") -> {
+                    MainModel.JavaScriptType.loginCareerCenter -> {
                         // 徳島大学キャリアセンター室
                         // 自動入力を行う(cアカウントは同じ、パスワードは異なる可能性あり)
                         // ログインボタンは自動にしない(キャリアセンターと大学パスワードは人によるが同じではないから)
@@ -255,8 +256,10 @@ class MainActivity : AppCompatActivity() {
                         DataManager.canExecuteJavascript = false
                     }
 
-                    else -> {
-
+                    // JavaScriptを実行するフラグが立っていない場合は抜ける
+                    MainModel.JavaScriptType.none -> {
+                        // JavaScriptを動かす必要がなかったURLの場合
+                        // 何もしない
                     }
                 }
             }
