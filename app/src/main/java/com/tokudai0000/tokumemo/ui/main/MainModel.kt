@@ -8,8 +8,8 @@ class MainModel: ViewModel() {
 //    public var urlString = ""
 
     /// シラバスをJavaScriptで自動入力する際、参照変数
-//    public var subjectName = ""
-//    public var teacherName = ""
+    public var subjectName = ""
+    public var teacherName = ""
 
     /// ログイン処理中かどうか
 //    public var isLoginProcessing = false

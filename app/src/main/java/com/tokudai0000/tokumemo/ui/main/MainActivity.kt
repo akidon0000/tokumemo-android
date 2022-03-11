@@ -30,11 +30,7 @@ class MainActivity : AppCompatActivity() {
     // ログイン用　アンケート催促が出ないユーザー用
     private var isInitFinishLogin = true
 
-    // シラバスをJavaScriptで自動入力する際、参照変数
-    private var subjectName = ""
-    private var teacherName = ""
-
-    private val viewModel: MainModel = ViewModelProviders.of(this).get(MainModel::class.java)
+    private var viewModel: MainModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     // Private
     private fun configureMainActivity() {
         // Outlet
+        viewModel = ViewModelProviders.of(this).get(MainModel::class.java)
         webView = findViewById<WebView>(R.id.webView)
         val webViewGoBackButton = findViewById<Button>(R.id.webViewGoBackButton)
         val webViewGoForwardButton = findViewById<Button>(R.id.webViewGoForwardButton)
@@ -132,13 +129,13 @@ class MainActivity : AppCompatActivity() {
     private val startForSyllabusActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
         if (result.resultCode == Activity.RESULT_OK) {
 
-            DataManager.isExecuteJavascript = true
+            DataManager.canExecuteJavascript = true
 
             // RESULT_OK時の処理
             val resultIntent = result.data
             // シラバスをJavaScriptで自動入力する際、参照変数
-            subjectName = guard(resultIntent?.getStringExtra("Subject_KEY")) {} // nilの場合は代入しないだけ
-            teacherName = guard(resultIntent?.getStringExtra("Teacher_KEY")) {}
+            viewModel!!.subjectName = guard(resultIntent?.getStringExtra("Subject_KEY")) {} // nilの場合は代入しないだけ
+            viewModel!!.teacherName = guard(resultIntent?.getStringExtra("Teacher_KEY")) {}
             webView?.loadUrl("http://eweb.stud.tokushima-u.ac.jp/Portal/Public/Syllabus/")
         }
     }
@@ -153,7 +150,7 @@ class MainActivity : AppCompatActivity() {
     // 教務事務システムのみ、別のログイン方法をとっている？ため、初回に教務事務システムにログインし、キャッシュで別のサイトもログインしていく
     private fun login() {
         // 次に読み込まれるURLはJavaScriptを動かすことを許可する(ログイン用)
-        DataManager.isExecuteJavascript = true
+        DataManager.canExecuteJavascript = true
 //        viewModel.isInitFinishLogin = true
         // 登録者か非登録者か判定
         if (encryptedLoad("KEY_cAccount").isEmpty()) {
@@ -189,7 +186,7 @@ class MainActivity : AppCompatActivity() {
                     // 大学サービスにログイン完了後、どのページを読み込むか
                     isFinishLogin(urlString) -> {
                         // フラグを立てる
-                        DataManager.isExecuteJavascript = true
+                        DataManager.canExecuteJavascript = true
                         // 初期設定画面のURLを読み込む
                         for (menuList in Constant.menuLists) {
                             // ユーザーが指定した初期画面を探す
@@ -202,7 +199,7 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     // JavaScriptを実行するフラグが立っていない場合は抜ける
-                    !DataManager.isExecuteJavascript -> {
+                    !DataManager.canExecuteJavascript -> {
 
                     }
 
@@ -212,21 +209,21 @@ class MainActivity : AppCompatActivity() {
                         webView?.evaluateJavascript("document.getElementById('password').value= '" + "$password" + "'", null)
                         webView?.evaluateJavascript("document.getElementsByClassName('form-element form-button')[0].click();", null)
                         // フラグを下ろす
-                        DataManager.isExecuteJavascript = false
+                        DataManager.canExecuteJavascript = false
                     }
 
                     // シラバス
                     urlString == "http://eweb.stud.tokushima-u.ac.jp/Portal/Public/Syllabus/" -> {
                         // シラバスの検索画面
                         // ネイティブでの検索内容をWebに反映したのち、検索を行う
-                        webView?.evaluateJavascript("document.getElementById('ctl00_phContents_txt_sbj_Search').value= '" + "$subjectName" + "'", null)
-                        webView?.evaluateJavascript("document.getElementById('ctl00_phContents_txt_staff_Search').value= '" + "$teacherName" + "'", null)
+                        webView?.evaluateJavascript("document.getElementById('ctl00_phContents_txt_sbj_Search').value= '" + "${viewModel!!.subjectName}" + "'", null)
+                        webView?.evaluateJavascript("document.getElementById('ctl00_phContents_txt_staff_Search').value= '" + "${viewModel!!.teacherName}" + "'", null)
                         webView?.evaluateJavascript("document.getElementById('ctl00_phContents_ctl06_btnSearch').click();", null)
 
-                        subjectName = "" // 初期化
-                        teacherName = ""
+                        viewModel!!.subjectName = "" // 初期化
+                        viewModel!!.teacherName = ""
                         // フラグを下ろす
-                        DataManager.isExecuteJavascript = false
+                        DataManager.canExecuteJavascript = false
                     }
 
                     // outlook(メール) && 登録者判定
@@ -238,7 +235,7 @@ class MainActivity : AppCompatActivity() {
                         webView?.evaluateJavascript("document.getElementById('passwordInput').value= '" + "$password" + "'", null)
                         webView?.evaluateJavascript("document.getElementById('submitButton').click();", null)
                         // フラグを下ろす
-                        DataManager.isExecuteJavascript = false
+                        DataManager.canExecuteJavascript = false
                     }
 
                     // キャリア支援室
@@ -249,7 +246,7 @@ class MainActivity : AppCompatActivity() {
                         webView?.evaluateJavascript("document.getElementsByName('user_id')[0].value= '" + "$cAccount" + "'", null)
                         webView?.evaluateJavascript("document.getElementsByName('user_password')[0].value= '" + "$password" + "'", null)
                         // フラグを下ろす
-                        DataManager.isExecuteJavascript = false
+                        DataManager.canExecuteJavascript = false
                     }
 
                     else -> {
