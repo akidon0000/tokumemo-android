@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         initActivitySetup()
-        
+
         // WebViewの初期設定を行う
         webViewSetup()
 
@@ -67,31 +67,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     // 子(MenuActivity)から戻ってきた時、データを子から受けとり処理を行う
-    // backButtonではここは通らない
     private val startForMenuActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-        if (result.resultCode != Activity.RESULT_OK) {
-            throw Exception("[ERROR]: MenuActivityからMainActivityへの遷移時エラー")
-        }
-
-        // 呼び出し先のActivityを閉じた時に呼び出されるコールバックを登録
-        // (呼び出し先で埋め込んだデータを取り出して処理する)
-        // RESULT_OK時の処理
-        val resultIntent = result.data
-        // MenuActivityで、どのセルが選択されたかを取得
-        val menuID = resultIntent?.getStringExtra("MenuID_KEY")
-        val menuUrl = resultIntent?.getStringExtra("MenuUrl_KEY")
-        // menuIDによる条件分岐
-        when {
-            // リマークしているのは後日実装予定の機能
+        if (result.resultCode == Activity.RESULT_OK) {
+            // 呼び出し先のActivityを閉じた時に呼び出されるコールバックを登録
+            // (呼び出し先で埋め込んだデータを取り出して処理する)
+            // RESULT_OK時の処理
+            val resultIntent = result.data
+            // MenuActivityで、どのセルが選択されたかを取得
+            val menuID = resultIntent?.getStringExtra("MenuID_KEY")
+            val menuUrl = resultIntent?.getStringExtra("MenuUrl_KEY")
+            // menuIDによる条件分岐
+            when {
+                // リマークしているのは後日実装予定の機能
 //                menuID == MenuLists.libraryCalendar.toString() -> {
 //                }
 
-            menuID == MenuLists.syllabus.toString() -> {
-                // シラバス検索画面を表示
-                val intent = Intent(this, SyllabusActivity::class.java)
-                // 戻ってきた時、startForSyllabusActivityを呼び出す
-                startForSyllabusActivity.launch(intent)
-            }
+                menuID == MenuLists.syllabus.toString() -> {
+                    // シラバス検索画面を表示
+                    val intent = Intent(this, SyllabusActivity::class.java)
+                    // 戻ってきた時、startForSyllabusActivityを呼び出す
+                    startForSyllabusActivity.launch(intent)
+                }
 
 //                menuID == MenuLists.customize.toString() -> {
 //                }
@@ -99,47 +95,49 @@ class MainActivity : AppCompatActivity() {
 //                menuID == MenuLists.firstViewSetting.toString() -> {
 //                }
 
-            menuID == MenuLists.password.toString() -> {
-                // パスワード登録画面を表示
-                val intent = Intent(this, PasswordActivity::class.java)
-                // 戻ってきた時、startForPasswordActivityを呼び出す
-                startForPasswordActivity.launch(intent)
-            }
+                menuID == MenuLists.password.toString() -> {
+                    // パスワード登録画面を表示
+                    val intent = Intent(this, PasswordActivity::class.java)
+                    // 戻ってきた時、startForPasswordActivityを呼び出す
+                    startForPasswordActivity.launch(intent)
+                }
 
 //                menuID == MenuLists.aboutThisApp.toString() -> {
 //                }
 
-            else -> {
-                webView!!.loadUrl(menuUrl!!) // URLが無い場合は上記で除けているので強制アンラップ
+                else -> {
+                    webView!!.loadUrl(menuUrl!!) // URLが無い場合は上記で除けているので強制アンラップ
+                }
             }
+        }else{
+            // backButtonではここを通る
         }
     }
 
     // 子(SyllabusActivity)で検索ボタンを押した場合、検索処理を行う
-    // backButtonではここは通らない
     private val startForSyllabusActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-        if (result.resultCode != Activity.RESULT_OK) {
-            throw Exception("[ERROR]: PasswordActivityからMainActivityへの遷移時エラー")
+        if (result.resultCode == Activity.RESULT_OK) {
+            DataManager.canExecuteJavascript = true
+
+            // RESULT_OK時の処理
+            val resultIntent = result.data
+            // シラバスをJavaScriptで自動入力する際、参照変数
+            viewModel!!.subjectName = guard(resultIntent?.getStringExtra("Subject_KEY")) {} // nilの場合は代入しないだけ
+            viewModel!!.teacherName = guard(resultIntent?.getStringExtra("Teacher_KEY")) {}
+            webView!!.loadUrl("http://eweb.stud.tokushima-u.ac.jp/Portal/Public/Syllabus/")
+        }else{
+            // backButtonではここを通る
         }
-
-        DataManager.canExecuteJavascript = true
-
-        // RESULT_OK時の処理
-        val resultIntent = result.data
-        // シラバスをJavaScriptで自動入力する際、参照変数
-        viewModel!!.subjectName = guard(resultIntent?.getStringExtra("Subject_KEY")) {} // nilの場合は代入しないだけ
-        viewModel!!.teacherName = guard(resultIntent?.getStringExtra("Teacher_KEY")) {}
-        webView!!.loadUrl("http://eweb.stud.tokushima-u.ac.jp/Portal/Public/Syllabus/")
     }
 
     // 子(PasswordActivity)で登録ボタンを押した場合、再度ログイン処理を行う
-    // backButtonではここは通らない
     private val startForPasswordActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-        if (result.resultCode != Activity.RESULT_OK) {
-            throw Exception("[ERROR]: PasswordActivityからMainActivityへの遷移時エラー")
+        if (result.resultCode == Activity.RESULT_OK) {
+            // ログイン処理を行う
+            loadLoginPage()
+        }else{
+            // backButtonではここを通る
         }
-        // ログイン処理を行う
-        loadLoginPage()
     }
 
     // 教務事務システムのみ、別のログイン方法をとっている？ため、初回に教務事務システムにログインし、キャッシュで別のサイトもログインしていく
