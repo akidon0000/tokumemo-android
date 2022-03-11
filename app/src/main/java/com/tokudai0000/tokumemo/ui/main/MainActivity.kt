@@ -51,15 +51,17 @@ class MainActivity : AppCompatActivity() {
         // Outlet
         viewModel = ViewModelProviders.of(this).get(MainModel::class.java)
         webView = findViewById<WebView>(R.id.webView)
+
         val webViewGoBackButton = findViewById<Button>(R.id.webViewGoBackButton)
         val webViewGoForwardButton = findViewById<Button>(R.id.webViewGoForwardButton)
         val showMenuListsButton = findViewById<Button>(R.id.showMenuListsButton)
 
         // Action
-        webViewGoBackButton.setOnClickListener { webView?.goBack() }
-        webViewGoForwardButton.setOnClickListener { webView?.goForward() }
+        webViewGoBackButton.setOnClickListener { webView!!.goBack() }
+        webViewGoForwardButton.setOnClickListener { webView!!.goForward() }
         showMenuListsButton.setOnClickListener {
             val intent = Intent(this, MenuActivity::class.java)
+            // 戻ってきた時、startForMenuActivityを呼び出す
             startForMenuActivity.launch(intent)
         }
     }
@@ -71,8 +73,10 @@ class MainActivity : AppCompatActivity() {
         if (result.resultCode == Activity.RESULT_OK) {
             // RESULT_OK時の処理
             val resultIntent = result.data
+            // MenuActivityで、どのセルが選択されたかを取得
             val menuID = resultIntent?.getStringExtra("MenuID_KEY")
             val menuUrl = resultIntent?.getStringExtra("MenuUrl_KEY")
+            // menuIDによる条件分岐
             when {
                 menuID == MenuLists.currentTermPerformance.toString() -> {
                     // 2020年4月〜2021年3月までの成績は https ... Results_Get_YearTerm.aspx?year=2020
