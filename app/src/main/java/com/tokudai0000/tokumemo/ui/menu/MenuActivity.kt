@@ -6,42 +6,44 @@ import android.os.Bundle
 import android.view.MotionEvent
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProviders
 import com.tokudai0000.tokumemo.Constant
 import com.tokudai0000.tokumemo.Menu
 import com.tokudai0000.tokumemo.MenuLists
 import com.tokudai0000.tokumemo.R
+import com.tokudai0000.tokumemo.ui.main.MainModel
 import java.util.*
 
 class MenuActivity : AppCompatActivity() {
 
-    var menuLists = arrayListOf<Menu>()
+    private var viewModel: MenuModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
 
+        initActivitySetup()
+    }
+
+    // MARK: - Private func
+    /// MenuActivityの初期セットアップ
+    private fun initActivitySetup() {
+        // Outlet
+        viewModel = ViewModelProviders.of(this).get(MenuModel::class.java)
+
         // findViewById
         var listView = findViewById<ListView>(R.id.listView)
 
         // Action
+        // メニューのセルがタップされたら
         listView?.setOnItemClickListener { parent, view, position, id ->
-            val menuID = menuLists[position].id.toString()
-            var menuUrl = menuLists[position].url
+            // タップされたセルの内容
+            val menuID = viewModel!!.menuLists[position].id.toString()
+            var menuUrl = viewModel!!.menuLists[position].url
+
             if (menuID == MenuLists.currentTermPerformance.toString()) {
-                // 2020年4月〜2021年3月までの成績は https ... Results_Get_YearTerm.aspx?year=2020
-                // 2021年4月〜2022年3月までの成績は https ... Results_Get_YearTerm.aspx?year=2021
-
-                // 現在時刻の取得
-                // Dateを作成すると現在日時が入るし、CalenderをgetInstanceでも現在日時が入る
-                val calendar: Calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"), Locale.JAPAN);
-                var year: Int = calendar.get(Calendar.YEAR)
-                val month: Int = calendar.get(Calendar.MONTH) + 1 // 1月が0、12月が11であることに注意
-
-                // 1月から3月までは前年の成績
-                if (month <= 3) {
-                    year -= 1
-                }
-                menuUrl = "https://eweb.stud.tokushima-u.ac.jp/Portal/StudentApp/Sp/ReferResults/SubDetail/Results_Get_YearTerm.aspx?year=" + "${year.toString()}"
+                // 今期の成績をタップされた場合、URLを作成する
+                menuUrl = viewModel!!.createCurrentTermPerformanceUrl()
             }
             // 親(MainActivity)にどのセルがタップされたのかを伝える
             val intent = Intent()
@@ -54,10 +56,10 @@ class MenuActivity : AppCompatActivity() {
         // ListViewに表示する内容をセット
         for (lists in Constant.menuLists) {
             if (lists.isDisplay) {
-                menuLists.add(lists)
+                viewModel!!.menuLists.add(lists)
             }
         }
-        listView?.adapter = ListAdapter(this, menuLists)
+        listView?.adapter = ListAdapter(this, viewModel!!.menuLists)
     }
 
     // メニュー外をタップされた時、MainActivityに戻る
