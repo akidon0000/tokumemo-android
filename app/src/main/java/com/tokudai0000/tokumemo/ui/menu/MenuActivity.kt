@@ -8,7 +8,9 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.tokudai0000.tokumemo.Constant
 import com.tokudai0000.tokumemo.Menu
+import com.tokudai0000.tokumemo.MenuLists
 import com.tokudai0000.tokumemo.R
+import java.util.*
 
 class MenuActivity : AppCompatActivity() {
 
@@ -23,10 +25,28 @@ class MenuActivity : AppCompatActivity() {
 
         // Action
         listView?.setOnItemClickListener { parent, view, position, id ->
+            val menuID = menuLists[position].id.toString()
+            var menuUrl = menuLists[position].url
+            if (menuID == MenuLists.currentTermPerformance.toString()) {
+                // 2020年4月〜2021年3月までの成績は https ... Results_Get_YearTerm.aspx?year=2020
+                // 2021年4月〜2022年3月までの成績は https ... Results_Get_YearTerm.aspx?year=2021
+
+                // 現在時刻の取得
+                // Dateを作成すると現在日時が入るし、CalenderをgetInstanceでも現在日時が入る
+                val calendar: Calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"), Locale.JAPAN);
+                var year: Int = calendar.get(Calendar.YEAR)
+                val month: Int = calendar.get(Calendar.MONTH) + 1 // 1月が0、12月が11であることに注意
+
+                // 1月から3月までは前年の成績
+                if (month <= 3) {
+                    year -= 1
+                }
+                menuUrl = "https://eweb.stud.tokushima-u.ac.jp/Portal/StudentApp/Sp/ReferResults/SubDetail/Results_Get_YearTerm.aspx?year=" + "${year.toString()}"
+            }
             // 親(MainActivity)にどのセルがタップされたのかを伝える
             val intent = Intent()
-            intent.putExtra("MenuID_KEY", menuLists[position].id.toString())
-            intent.putExtra("MenuUrl_KEY", menuLists[position].url)
+            intent.putExtra("MenuID_KEY", menuID)
+            intent.putExtra("MenuUrl_KEY", menuUrl)
             setResult(Activity.RESULT_OK, intent)
             finish()
         }

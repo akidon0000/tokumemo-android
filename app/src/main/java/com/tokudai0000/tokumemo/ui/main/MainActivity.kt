@@ -68,63 +68,47 @@ class MainActivity : AppCompatActivity() {
 
     // 子(MenuActivity)から戻ってきた時、データを子から受けとり処理を行う
     private val startForMenuActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        if (result.resultCode != Activity.RESULT_OK) {
+
+        }
         // 呼び出し先のActivityを閉じた時に呼び出されるコールバックを登録
         // (呼び出し先で埋め込んだデータを取り出して処理する)
-        if (result.resultCode == Activity.RESULT_OK) {
-            // RESULT_OK時の処理
-            val resultIntent = result.data
-            // MenuActivityで、どのセルが選択されたかを取得
-            val menuID = resultIntent?.getStringExtra("MenuID_KEY")
-            val menuUrl = resultIntent?.getStringExtra("MenuUrl_KEY")
-            // menuIDによる条件分岐
-            when {
-                menuID == MenuLists.currentTermPerformance.toString() -> {
-                    // 2020年4月〜2021年3月までの成績は https ... Results_Get_YearTerm.aspx?year=2020
-                    // 2021年4月〜2022年3月までの成績は https ... Results_Get_YearTerm.aspx?year=2021
-
-                    // 現在時刻の取得
-                    // Dateを作成すると現在日時が入るし、CalenderをgetInstanceでも現在日時が入る
-                    val calendar: Calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"), Locale.JAPAN);
-                    var year: Int = calendar.get(Calendar.YEAR)
-                    val month: Int = calendar.get(Calendar.MONTH) + 1 // 1月が0、12月が11であることに注意
-
-                    // 1月から3月までは前年の成績
-                    if (month <= 3) {
-                        year -= 1
-                    }
-                    val urlString = "https://eweb.stud.tokushima-u.ac.jp/Portal/StudentApp/Sp/ReferResults/SubDetail/Results_Get_YearTerm.aspx?year=" + "${year.toString()}"
-                    webView?.loadUrl(urlString)
-                }
-
-                menuID == MenuLists.libraryCalendar.toString() -> {
-
-                }
-
-                menuID == MenuLists.syllabus.toString() -> {
-                    val intent = Intent(this, SyllabusActivity::class.java)
-                    startForSyllabusActivity.launch(intent)
-                }
-
-                menuID == MenuLists.customize.toString() -> {
-
-                }
-
-                menuID == MenuLists.firstViewSetting.toString() -> {
-
-                }
-
-                menuID == MenuLists.password.toString() -> {
-                    val intent = Intent(this, PasswordActivity::class.java)
-                    startForPasswordActivity.launch(intent)
-                }
-
-//                menuID == MenuLists.aboutThisApp.toString() -> {
-//
+        // RESULT_OK時の処理
+        val resultIntent = result.data
+        // MenuActivityで、どのセルが選択されたかを取得
+        val menuID = resultIntent?.getStringExtra("MenuID_KEY")
+        val menuUrl = resultIntent?.getStringExtra("MenuUrl_KEY")
+        // menuIDによる条件分岐
+        when {
+            // リマークしているのは後日実装予定の機能
+//                menuID == MenuLists.libraryCalendar.toString() -> {
 //                }
 
-                else -> {
-                    webView?.loadUrl(menuUrl!!) // URLが無い場合は上記で除けているので強制アンラップ
-                }
+            menuID == MenuLists.syllabus.toString() -> {
+                // シラバス検索画面を表示
+                val intent = Intent(this, SyllabusActivity::class.java)
+                // 戻ってきた時、startForSyllabusActivityを呼び出す
+                startForSyllabusActivity.launch(intent)
+            }
+
+//                menuID == MenuLists.customize.toString() -> {
+//                }
+
+//                menuID == MenuLists.firstViewSetting.toString() -> {
+//                }
+
+            menuID == MenuLists.password.toString() -> {
+                // パスワード登録画面を表示
+                val intent = Intent(this, PasswordActivity::class.java)
+                // 戻ってきた時、startForPasswordActivityを呼び出す
+                startForPasswordActivity.launch(intent)
+            }
+
+//                menuID == MenuLists.aboutThisApp.toString() -> {
+//                }
+
+            else -> {
+                webView!!.loadUrl(menuUrl!!) // URLが無い場合は上記で除けているので強制アンラップ
             }
         }
     }
