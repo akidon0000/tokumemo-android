@@ -40,8 +40,19 @@ class Menu ( var title: String,               // 表示名ユーザーが変更�
              val canInitView: Boolean )       // 初期画面として設定可能か
 
 class Constant {
-
     companion object {
+        /// 現在の利用規約バージョン
+        val latestTermsVersion = "1.0.1"
+
+        /// WebViewで読み込みを許可するドメイン
+        val allowedDomains = arrayOf("tokushima-u.ac.jp",    // 大学サイト
+                                    "office365.com",        // outlook(メール) ログイン画面
+                                    "microsoftonline.com",  // outlook(メール) ログイン画面表示前、1度だけ遷移されるその後"office365.com"へ遷移される
+                                    "office.com",           // outlook(メール) メールボックス
+                                    "tokudai-syusyoku.com", // キャリア支援室
+                                    "tokudai.marucoop.com", // 徳島大学生活共同組合
+                                    "youtube.com")          // 大学サイトのインライン再生に対応させる為
+
         //ユーザーリストでデーターを追加
         val menuLists = arrayListOf<Menu> (
             Menu( "教務事務システム",

@@ -1,11 +1,12 @@
 package com.tokudai0000.tokumemo.ui.main
 
 import androidx.lifecycle.ViewModel
+import com.tokudai0000.tokumemo.Constant
 
 class MainModel: ViewModel() {
 
     /// Favorite画面へURLを渡すのに使用
-//    public var urlString = ""
+    public var urlString = ""
 
     /// シラバスをJavaScriptで自動入力する際、参照変数
     public var subjectName = ""
@@ -21,17 +22,19 @@ class MainModel: ViewModel() {
     /// ドメイン名が許可しているのと一致しているなら許可(ホワイトリスト制)
     /// - Parameter url: 判定したいURL
     /// - Returns: 判定結果、許可ならtrue
-//    public fun isAllowedDomainCheck(urlString: String): Boolean {
-//
-//        // ドメインを検証
-//        for (item in Constant.allowedDomains) {
-//            if (urlString.startsWith(item)) {
-//                // 一致したなら
-//                return true
-//            }
-//        }
-//        return false
-//    }
+    public fun isAllowedDomainCheck(urlString: String): Boolean {
+
+        // ドメインを検証
+        for (item in Constant.allowedDomains) {
+            val regex = Regex(item)
+            // 部分一致
+            if (urlString.contains(regex)) {
+                // 一致したなら
+                return true
+            }
+        }
+        return false
+    }
 
     /// JavaScriptを動かす種類
 //    enum class JavaScriptType {
@@ -86,21 +89,20 @@ class MainModel: ViewModel() {
     ///   isInitViewは以下の1つの事例を除き、必ずtrueは存在する。
     ///   1. お気に入り登録内容を初期設定画面に登録し、カスタマイズから削除した場合
     /// - Returns: 設定した初期画面のURLの文字列
-//    public fun searchInitPageUrl(): String {
-//        // メニューリストの内1つだけ、isInitView=trueが存在するので探す
-//        for menuList in dataManager.menuLists {
-//            // 初期画面を探す
-//            if (menuList.isInitView,
-//            val urlString = menuList.url,
-//            val url = URL(string: urlString)) {
-//                return URLRequest(url: url)
-//            }
-//        }
-//        // 見つからなかった場合
-//        // お気に入り画面を初期画面に設定しており、カスタマイズから削除した可能性がある為
-//        // マナバを表示させる
-//        return Url.manabaPC.urlRequest()
-//    }
+    public fun searchInitPageUrl(): String {
+        // 初期設定画面のURLを読み込む
+        for (menuList in Constant.menuLists) {
+            // ユーザーが指定した初期画面を探す
+            if (menuList.isInitView) {
+                // メニューリストの内1つだけ、isInitView=trueが存在する
+                return menuList.url.toString()
+            }
+        }
+        // 見つからなかった場合
+        // お気に入り画面を初期画面に設定しており、カスタマイズから削除した可能性がある為
+        // マナバを表示させる
+        return "https://manaba.lms.tokushima-u.ac.jp/ct/home"
+    }
 
     /// 大学統合認証システム(IAS)へのログインが完了したかどうか
     ///
@@ -161,13 +163,13 @@ class MainModel: ViewModel() {
     /// タイムアウトのURLであるかどうかの判定
     /// - Parameter urlString: 読み込み完了したURLの文字列
     /// - Returns: 結果
-//    public fun isTimeout(urlString: String): Boolean {
-//        if (urlString == Url.universityServiceTimeOut.string() ||
-//                urlString == Url.universityServiceTimeOut2.string()) {
-//            return true
-//        }
-//        return false
-//    }
+    public fun isTimeout(urlString: String): Boolean {
+        if (urlString == "https://eweb.stud.tokushima-u.ac.jp/Portal/RichTimeOut.aspx" ||
+                urlString == "https://eweb.stud.tokushima-u.ac.jp/Portal/RichTimeOutSub.aspx") {
+            return true
+        }
+        return false
+    }
 
     // MARK: - Private
 

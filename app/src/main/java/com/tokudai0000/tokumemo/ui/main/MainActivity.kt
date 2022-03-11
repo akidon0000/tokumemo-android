@@ -3,6 +3,7 @@ package com.tokudai0000.tokumemo.ui.main
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -15,7 +16,6 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.tokudai0000.tokumemo.AKLibrary.guard
-import com.tokudai0000.tokumemo.Constant
 import com.tokudai0000.tokumemo.ui.menu.MenuActivity
 import com.tokudai0000.tokumemo.MenuLists
 import com.tokudai0000.tokumemo.Model.DataManager
@@ -35,18 +35,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        configureMainActivity()
-
         // WebViewの初期設定を行う
         webViewSetup()
 
-        // パスワード登録者、非登録者によって表示するURLを変更する
-        loadLoginPage()
-
+        initActivitySetup()
     }
 
-    // Private
-    private fun configureMainActivity() {
+    // Private func
+    /// MainActivityの初期セットアップ
+    private fun initActivitySetup() {
         // Outlet
         viewModel = ViewModelProviders.of(this).get(MainModel::class.java)
         webView = findViewById<WebView>(R.id.webView)
@@ -63,6 +60,9 @@ class MainActivity : AppCompatActivity() {
             // 戻ってきた時、startForMenuActivityを呼び出す
             startForMenuActivity.launch(intent)
         }
+
+        // パスワード登録者、非登録者によって表示するURLを変更する
+        loadLoginPage()
     }
 
     // 子(MenuActivity)から戻ってきた時、データを子から受けとり処理を行う
@@ -152,11 +152,37 @@ class MainActivity : AppCompatActivity() {
     private fun webViewSetup() {
         // javascriptを有効化
         webView!!.settings.javaScriptEnabled = true // 強制アンラップしないとエラーが出る
-        //ウェブページがクロム（または、その他の検索アプリ）に開かなくてアプリのwebviewに開かるような設定
+        //ウェブページがGoogleChrome（または、その他の検索アプリ）で開かなくてアプリのwebviewに開かるような設定
         webView?.webViewClient = object : WebViewClient(){
-            // MARK: - 読み込み設定（リクエスト前）
-            override fun onPageStarted(view: WebView?, url: String, favicon: Bitmap?) {
-                Log.d("--- ログ --->", "タップされたリンクのurl:$url")
+
+            /// 読み込み設定（リクエスト前）
+            ///
+            /// 以下2つの状態であったら読み込みを開始する。
+            ///  1. 読み込み前のURLがnilでないこと
+            ///  2. 許可されたドメインであること
+            override fun onPageStarted(view: WebView?, urlString: String, favicon: Bitmap?) {
+                Log.d("--- ログ --->", "タップされたリンクのurl:$urlString")
+
+                // 許可されたドメインか判定
+                if (viewModel!!.isAllowedDomainCheck(urlString) == false) {
+                    // 許可外のURLが来た場合は、Chromeで開く
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(urlString))
+                    intent.setPackage("com.android.chrome")
+                    startActivity(intent)
+                    return
+                }
+
+                // お気に入り画面のためにURLを保持
+                viewModel!!.urlString = urlString
+
+                // タイムアウトした場合
+                if (viewModel!!.isTimeout(urlString)) {
+                    // ログイン処理を始める
+                    loadLoginPage()
+                }
+
+                // 問題ない場合読み込みを許可
+                return
             }
 
             // MARK: - 読み込み完了
@@ -168,22 +194,15 @@ class MainActivity : AppCompatActivity() {
                 val cAccount = encryptedLoad("KEY_cAccount")
                 val password = encryptedLoad("KEY_password")
 
-                when {
+                // 大学統合認証システムのログイン処理が終了した場合
+                if (viewModel!!.isLoggedin(urlString)) {
+                    // 初期設定画面がメール(Outlook)の場合用
+                    DataManager.canExecuteJavascript = true
+                    // ユーザが設定した初期画面を読み込む
+                    webView!!.loadUrl(viewModel!!.searchInitPageUrl())
+                }
 
-                    // 大学サービスにログイン完了後、どのページを読み込むか
-                    viewModel!!.isLoggedin(urlString) -> {
-                        // フラグを立てる
-                        DataManager.canExecuteJavascript = true
-                        // 初期設定画面のURLを読み込む
-                        for (menuList in Constant.menuLists) {
-                            // ユーザーが指定した初期画面を探す
-                            if (menuList.isInitView) {
-                                // メニューリストの内1つだけ、isInitView=trueが存在する
-                                val urlString = menuList.url.toString()
-                                webView?.loadUrl(urlString)
-                            }
-                        }
-                    }
+                when {
 
                     // JavaScriptを実行するフラグが立っていない場合は抜ける
                     !DataManager.canExecuteJavascript -> {
@@ -243,26 +262,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
-//    /// 初回ログイン後すぐか判定
-//    /// - Parameter urlString: 現在表示しているURL
-//    /// - Returns: 判定結果
-//    private fun isFinishLogin(urlString: String): Boolean {
-//
-//        // アンケート催促画面が出た == ログイン後すぐ
-//        if (urlString == "https://eweb.stud.tokushima-u.ac.jp/Portal/StudentApp/TopEnqCheck.aspx") {
-//            isInitFinishLogin = false
-//            return true
-//        }
-//
-//        // モバイル画面かつisInitFinishLoginがtrue つまり　アンケート催促が出ず(アンケート全て完了してるユーザー)そのままモバイル画面へ遷移した人
-//        if (urlString.startsWith("https://eweb.stud.tokushima-u.ac.jp/Portal/StudentApp/") && isInitFinishLogin) {
-//            isInitFinishLogin = false
-//            return true
-//        }
-//
-//        return false
-//    }
 
     // 以下、暗号化してデバイスに保存する(PasswordActivityにも存在するので今後、統一)
     companion object {
