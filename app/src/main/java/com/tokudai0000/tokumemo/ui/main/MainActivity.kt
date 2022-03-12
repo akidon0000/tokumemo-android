@@ -28,13 +28,11 @@ import com.tokudai0000.tokumemo.ui.menu.Syllabus.SyllabusActivity
 
 class MainActivity : AppCompatActivity() {
 
-    private var webView: WebView? = null
+    private lateinit var webView: WebView
+    private lateinit var viewModel: MainModel
+
     // ログイン用　アンケート催促が出ないユーザー用
     private var isInitFinishLogin = true
-
-    private var viewModel: MainModel? = null
-
-    private lateinit var analytics: FirebaseAnalytics
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +48,6 @@ class MainActivity : AppCompatActivity() {
     // Private func
     /// MainActivityの初期セットアップ
     private fun initActivitySetup() {
-        analytics = Firebase.analytics
         // Outlet
         viewModel = ViewModelProviders.of(this).get(MainModel::class.java)
         webView = findViewById<WebView>(R.id.webView)
@@ -60,8 +57,8 @@ class MainActivity : AppCompatActivity() {
         val showMenuListsButton = findViewById<Button>(R.id.showMenuListsButton)
 
         // Action
-        webViewGoBackButton.setOnClickListener { webView!!.goBack() }
-        webViewGoForwardButton.setOnClickListener { webView!!.goForward() }
+        webViewGoBackButton.setOnClickListener { webView.goBack() }
+        webViewGoForwardButton.setOnClickListener { webView.goForward() }
         showMenuListsButton.setOnClickListener {
             val intent = Intent(this, MenuActivity::class.java)
             // 戻ってきた時、startForMenuActivityを呼び出す
@@ -112,11 +109,9 @@ class MainActivity : AppCompatActivity() {
 //                }
 
                 else -> {
-                    webView!!.loadUrl(menuUrl!!) // URLが無い場合は上記で除けているので強制アンラップ
+                    webView.loadUrl(menuUrl!!) // URLが無い場合は上記で除けているので強制アンラップ
                 }
             }
-        }else{
-            // backButtonではここを通る
         }
     }
 
@@ -128,11 +123,9 @@ class MainActivity : AppCompatActivity() {
             // RESULT_OK時の処理
             val resultIntent = result.data
             // シラバスをJavaScriptで自動入力する際、参照変数
-            viewModel!!.subjectName = guard(resultIntent?.getStringExtra("Subject_KEY")) {} // nilの場合は代入しないだけ
-            viewModel!!.teacherName = guard(resultIntent?.getStringExtra("Teacher_KEY")) {}
-            webView!!.loadUrl("http://eweb.stud.tokushima-u.ac.jp/Portal/Public/Syllabus/")
-        }else{
-            // backButtonではここを通る
+            viewModel.subjectName = guard(resultIntent?.getStringExtra("Subject_KEY")) {} // nilの場合は代入しないだけ
+            viewModel.teacherName = guard(resultIntent?.getStringExtra("Teacher_KEY")) {}
+            webView.loadUrl("http://eweb.stud.tokushima-u.ac.jp/Portal/Public/Syllabus/")
         }
     }
 
@@ -141,8 +134,6 @@ class MainActivity : AppCompatActivity() {
         if (result.resultCode == Activity.RESULT_OK) {
             // ログイン処理を行う
             loadLoginPage()
-        }else{
-            // backButtonではここを通る
         }
     }
 
@@ -151,17 +142,17 @@ class MainActivity : AppCompatActivity() {
         // 次に読み込まれるURLはJavaScriptを動かすことを許可する(ログイン用)
         DataManager.canExecuteJavascript = true
         val urlString = "https://eweb.stud.tokushima-u.ac.jp/Portal/"
-        webView!!.loadUrl(urlString)
+        webView.loadUrl(urlString)
     }
 
     private fun webViewSetup() {
-        webView!!.settings.javaScriptEnabled = true // javascriptを有効化
-        webView!!.settings.builtInZoomControls = true // ズームを許可
-        webView!!.settings.displayZoomControls = false // 右下に表示されるズーム制御ボタンの非表示
+        webView.settings.javaScriptEnabled = true // javascriptを有効化
+        webView.settings.builtInZoomControls = true // ズームを許可
+        webView.settings.displayZoomControls = false // 右下に表示されるズーム制御ボタンの非表示
 //        settings.setSupportZoom(true)
 //        getSettings().setBuiltInZoomControls(true);
         //ウェブページがGoogleChrome（または、その他の検索アプリ）で開かなくてアプリのwebviewに開かるような設定
-        webView!!.webViewClient = object : WebViewClient(){
+        webView.webViewClient = object : WebViewClient(){
 
             /// 読み込み設定（リクエスト前）
             ///
@@ -172,7 +163,7 @@ class MainActivity : AppCompatActivity() {
                 Log.d("--- ログ --->", "タップされたリンクのurl:$urlString")
 
                 // 許可されたドメインか判定
-                if (viewModel!!.isAllowedDomainCheck(urlString) == false) {
+                if (viewModel.isAllowedDomainCheck(urlString) == false) {
                     // 許可外のURLが来た場合は、Chromeで開く
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(urlString))
                     startActivity(intent)
@@ -180,10 +171,10 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 // お気に入り画面のためにURLを保持
-                viewModel!!.urlString = urlString
+                viewModel.urlString = urlString
 
                 // タイムアウトした場合
-                if (viewModel!!.isTimeout(urlString)) {
+                if (viewModel.isTimeout(urlString)) {
                     // ログイン処理を始める
                     loadLoginPage()
                 }
@@ -197,8 +188,8 @@ class MainActivity : AppCompatActivity() {
             /// 主に以下2つのことを処理する
             ///  1. 大学統合認証システムのログイン処理が終了した場合、ユーザが設定した初期画面を読み込む
             ///  2. JavaScriptを動かしたいURLかどうかを判定し、必要なら動かす
-            override fun onPageFinished(view: WebView?, urlString: String?) {
-                val urlString = guard(urlString) {
+            override fun onPageFinished(view: WebView?, url: String?) {
+                val urlString = guard(url) {
                     throw Exception("[ERROR]: urlStringがnull")
                 }
 
@@ -206,37 +197,37 @@ class MainActivity : AppCompatActivity() {
                 val password = encryptedLoad("KEY_password")
 
                 // 大学統合認証システムのログイン処理が終了した場合
-                if (viewModel!!.isLoggedin(urlString)) {
+                if (viewModel.isLoggedin(urlString)) {
                     // 初期設定画面がメール(Outlook)の場合用
                     DataManager.canExecuteJavascript = true
                     // ユーザが設定した初期画面を読み込む
-                    webView!!.loadUrl(viewModel!!.searchInitPageUrl())
+                    webView.loadUrl(viewModel.searchInitPageUrl())
                 }
 
                 // JavaScriptを動かしたいURLかどうかを判定し、必要なら動かす
-                when (viewModel!!.anyJavaScriptExecute(urlString)) {
+                when (viewModel.anyJavaScriptExecute(urlString)) {
 
                     MainModel.JavaScriptType.loginIAS -> {
                         // 徳島大学　統合認証システムサイト(ログインサイト)
                         // 自動ログインを行う
-                        webView!!.evaluateJavascript("document.getElementById('username').value= '" + "$cAccount" + "'", null)
-                        webView!!.evaluateJavascript("document.getElementById('password').value= '" + "$password" + "'", null)
-                        webView!!.evaluateJavascript("document.getElementsByClassName('form-element form-button')[0].click();", null)
+                        webView.evaluateJavascript("document.getElementById('username').value= '" + "$cAccount" + "'", null)
+                        webView.evaluateJavascript("document.getElementById('password').value= '" + "$password" + "'", null)
+                        webView.evaluateJavascript("document.getElementsByClassName('form-element form-button')[0].click();", null)
                         // フラグを下ろす
                         DataManager.canExecuteJavascript = false
                         // ログイン処理中であるフラグを立てる
-                        viewModel!!.isLoginProcessing = true
+                        viewModel.isLoginProcessing = true
                     }
 
                     MainModel.JavaScriptType.syllabus -> {
                         // シラバスの検索画面
                         // ネイティブでの検索内容をWebに反映したのち、検索を行う
-                        webView!!.evaluateJavascript("document.getElementById('ctl00_phContents_txt_sbj_Search').value= '" + "${viewModel!!.subjectName}" + "'", null)
-                        webView!!.evaluateJavascript("document.getElementById('ctl00_phContents_txt_staff_Search').value= '" + "${viewModel!!.teacherName}" + "'", null)
-                        webView!!.evaluateJavascript("document.getElementById('ctl00_phContents_ctl06_btnSearch').click();", null)
+                        webView.evaluateJavascript("document.getElementById('ctl00_phContents_txt_sbj_Search').value= '" + "${viewModel.subjectName}" + "'", null)
+                        webView.evaluateJavascript("document.getElementById('ctl00_phContents_txt_staff_Search').value= '" + "${viewModel.teacherName}" + "'", null)
+                        webView.evaluateJavascript("document.getElementById('ctl00_phContents_ctl06_btnSearch').click();", null)
 
-                        viewModel!!.subjectName = "" // 初期化
-                        viewModel!!.teacherName = ""
+                        viewModel.subjectName = "" // 初期化
+                        viewModel.teacherName = ""
                         // フラグを下ろす
                         DataManager.canExecuteJavascript = false
                     }
@@ -245,9 +236,9 @@ class MainActivity : AppCompatActivity() {
                         // outlook(メール)へのログイン画面
                         // cアカウントを登録していなければ自動ログインは効果がないため
                         // 自動ログインを行う
-                        webView!!.evaluateJavascript("document.getElementById('userNameInput').value= '" + "$cAccount" + "@tokushima-u.ac.jp'", null)
-                        webView!!.evaluateJavascript("document.getElementById('passwordInput').value= '" + "$password" + "'", null)
-                        webView!!.evaluateJavascript("document.getElementById('submitButton').click();", null)
+                        webView.evaluateJavascript("document.getElementById('userNameInput').value= '" + "$cAccount" + "@tokushima-u.ac.jp'", null)
+                        webView.evaluateJavascript("document.getElementById('passwordInput').value= '" + "$password" + "'", null)
+                        webView.evaluateJavascript("document.getElementById('submitButton').click();", null)
                         // フラグを下ろす
                         DataManager.canExecuteJavascript = false
                     }
@@ -256,8 +247,8 @@ class MainActivity : AppCompatActivity() {
                         // 徳島大学キャリアセンター室
                         // 自動入力を行う(cアカウントは同じ、パスワードは異なる可能性あり)
                         // ログインボタンは自動にしない(キャリアセンターと大学パスワードは人によるが同じではないから)
-                        webView!!.evaluateJavascript("document.getElementsByName('user_id')[0].value= '" + "$cAccount" + "'", null)
-                        webView!!.evaluateJavascript("document.getElementsByName('user_password')[0].value= '" + "$password" + "'", null)
+                        webView.evaluateJavascript("document.getElementsByName('user_id')[0].value= '" + "$cAccount" + "'", null)
+                        webView.evaluateJavascript("document.getElementsByName('user_password')[0].value= '" + "$password" + "'", null)
                         // フラグを下ろす
                         DataManager.canExecuteJavascript = false
                     }

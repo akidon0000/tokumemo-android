@@ -16,7 +16,7 @@ import java.util.*
 
 class MenuActivity : AppCompatActivity() {
 
-    private var viewModel: MenuModel? = null
+    private lateinit var viewModel: MenuModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,12 +38,12 @@ class MenuActivity : AppCompatActivity() {
         // メニューのセルがタップされたら
         listView?.setOnItemClickListener { parent, view, position, id ->
             // タップされたセルの内容
-            val menuID = viewModel!!.menuLists[position].id.toString()
-            var menuUrl = viewModel!!.menuLists[position].url
+            val menuID = viewModel.menuLists[position].id.toString()
+            var menuUrl = viewModel.menuLists[position].url
 
             if (menuID == MenuLists.currentTermPerformance.toString()) {
                 // 今期の成績をタップされた場合、URLを作成する
-                menuUrl = viewModel!!.createCurrentTermPerformanceUrl()
+                menuUrl = viewModel.createCurrentTermPerformanceUrl()
             }
             // 親(MainActivity)にどのセルがタップされたのかを伝える
             val intent = Intent()
@@ -56,10 +56,10 @@ class MenuActivity : AppCompatActivity() {
         // ListViewに表示する内容をセット
         for (lists in Constant.menuLists) {
             if (lists.isDisplay) {
-                viewModel!!.menuLists.add(lists)
+                viewModel.menuLists.add(lists)
             }
         }
-        listView?.adapter = ListAdapter(this, viewModel!!.menuLists)
+        listView?.adapter = ListAdapter(this, viewModel.menuLists)
     }
 
     // メニュー外をタップされた時、MainActivityに戻る
