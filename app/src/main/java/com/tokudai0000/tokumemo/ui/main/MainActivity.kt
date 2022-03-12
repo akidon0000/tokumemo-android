@@ -15,6 +15,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProviders
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import com.tokudai0000.tokumemo.AKLibrary.guard
 import com.tokudai0000.tokumemo.ui.menu.MenuActivity
 import com.tokudai0000.tokumemo.MenuLists
@@ -31,6 +34,8 @@ class MainActivity : AppCompatActivity() {
 
     private var viewModel: MainModel? = null
 
+    private lateinit var analytics: FirebaseAnalytics
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -45,6 +50,7 @@ class MainActivity : AppCompatActivity() {
     // Private func
     /// MainActivityの初期セットアップ
     private fun initActivitySetup() {
+        analytics = Firebase.analytics
         // Outlet
         viewModel = ViewModelProviders.of(this).get(MainModel::class.java)
         webView = findViewById<WebView>(R.id.webView)
