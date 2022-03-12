@@ -149,10 +149,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun webViewSetup() {
-        // javascriptを有効化
-        webView!!.settings.javaScriptEnabled = true // 強制アンラップしないとエラーが出る
+        webView!!.settings.javaScriptEnabled = true // javascriptを有効化
+        webView!!.settings.builtInZoomControls = true // ズームを許可
+        webView!!.settings.displayZoomControls = false // 右下に表示されるズーム制御ボタンの非表示
+//        settings.setSupportZoom(true)
+//        getSettings().setBuiltInZoomControls(true);
         //ウェブページがGoogleChrome（または、その他の検索アプリ）で開かなくてアプリのwebviewに開かるような設定
-        webView?.webViewClient = object : WebViewClient(){
+        webView!!.webViewClient = object : WebViewClient(){
 
             /// 読み込み設定（リクエスト前）
             ///
@@ -211,9 +214,9 @@ class MainActivity : AppCompatActivity() {
                     MainModel.JavaScriptType.loginIAS -> {
                         // 徳島大学　統合認証システムサイト(ログインサイト)
                         // 自動ログインを行う
-                        webView?.evaluateJavascript("document.getElementById('username').value= '" + "$cAccount" + "'", null)
-                        webView?.evaluateJavascript("document.getElementById('password').value= '" + "$password" + "'", null)
-                        webView?.evaluateJavascript("document.getElementsByClassName('form-element form-button')[0].click();", null)
+                        webView!!.evaluateJavascript("document.getElementById('username').value= '" + "$cAccount" + "'", null)
+                        webView!!.evaluateJavascript("document.getElementById('password').value= '" + "$password" + "'", null)
+                        webView!!.evaluateJavascript("document.getElementsByClassName('form-element form-button')[0].click();", null)
                         // フラグを下ろす
                         DataManager.canExecuteJavascript = false
                         // ログイン処理中であるフラグを立てる
@@ -223,9 +226,9 @@ class MainActivity : AppCompatActivity() {
                     MainModel.JavaScriptType.syllabus -> {
                         // シラバスの検索画面
                         // ネイティブでの検索内容をWebに反映したのち、検索を行う
-                        webView?.evaluateJavascript("document.getElementById('ctl00_phContents_txt_sbj_Search').value= '" + "${viewModel!!.subjectName}" + "'", null)
-                        webView?.evaluateJavascript("document.getElementById('ctl00_phContents_txt_staff_Search').value= '" + "${viewModel!!.teacherName}" + "'", null)
-                        webView?.evaluateJavascript("document.getElementById('ctl00_phContents_ctl06_btnSearch').click();", null)
+                        webView!!.evaluateJavascript("document.getElementById('ctl00_phContents_txt_sbj_Search').value= '" + "${viewModel!!.subjectName}" + "'", null)
+                        webView!!.evaluateJavascript("document.getElementById('ctl00_phContents_txt_staff_Search').value= '" + "${viewModel!!.teacherName}" + "'", null)
+                        webView!!.evaluateJavascript("document.getElementById('ctl00_phContents_ctl06_btnSearch').click();", null)
 
                         viewModel!!.subjectName = "" // 初期化
                         viewModel!!.teacherName = ""
@@ -237,9 +240,9 @@ class MainActivity : AppCompatActivity() {
                         // outlook(メール)へのログイン画面
                         // cアカウントを登録していなければ自動ログインは効果がないため
                         // 自動ログインを行う
-                        webView?.evaluateJavascript("document.getElementById('userNameInput').value= '" + "$cAccount" + "@tokushima-u.ac.jp'", null)
-                        webView?.evaluateJavascript("document.getElementById('passwordInput').value= '" + "$password" + "'", null)
-                        webView?.evaluateJavascript("document.getElementById('submitButton').click();", null)
+                        webView!!.evaluateJavascript("document.getElementById('userNameInput').value= '" + "$cAccount" + "@tokushima-u.ac.jp'", null)
+                        webView!!.evaluateJavascript("document.getElementById('passwordInput').value= '" + "$password" + "'", null)
+                        webView!!.evaluateJavascript("document.getElementById('submitButton').click();", null)
                         // フラグを下ろす
                         DataManager.canExecuteJavascript = false
                     }
@@ -248,8 +251,8 @@ class MainActivity : AppCompatActivity() {
                         // 徳島大学キャリアセンター室
                         // 自動入力を行う(cアカウントは同じ、パスワードは異なる可能性あり)
                         // ログインボタンは自動にしない(キャリアセンターと大学パスワードは人によるが同じではないから)
-                        webView?.evaluateJavascript("document.getElementsByName('user_id')[0].value= '" + "$cAccount" + "'", null)
-                        webView?.evaluateJavascript("document.getElementsByName('user_password')[0].value= '" + "$password" + "'", null)
+                        webView!!.evaluateJavascript("document.getElementsByName('user_id')[0].value= '" + "$cAccount" + "'", null)
+                        webView!!.evaluateJavascript("document.getElementsByName('user_password')[0].value= '" + "$password" + "'", null)
                         // フラグを下ろす
                         DataManager.canExecuteJavascript = false
                     }

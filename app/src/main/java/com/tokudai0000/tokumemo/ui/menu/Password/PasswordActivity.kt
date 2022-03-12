@@ -19,6 +19,10 @@ class PasswordActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_password)
 
+        initSetup()
+    }
+
+    private fun initSetup() {
         // findViewById
         val backButton = findViewById<Button>(R.id.backButton)
         val registerButton = findViewById<Button>(R.id.registerButton)
