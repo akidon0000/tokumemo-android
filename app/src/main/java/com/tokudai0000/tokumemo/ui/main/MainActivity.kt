@@ -169,7 +169,6 @@ class MainActivity : AppCompatActivity() {
                 if (viewModel!!.isAllowedDomainCheck(urlString) == false) {
                     // 許可外のURLが来た場合は、Chromeで開く
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(urlString))
-                    intent.setPackage("com.android.chrome")
                     startActivity(intent)
                     return
                 }
