@@ -79,7 +79,7 @@ class Constant {
             Menu( "開館カレンダー",
                 MenuLists.libraryCalendar,
                 "",
-                true,
+                false, // 今後実装予定
                 false,
                 true),
 
@@ -121,14 +121,14 @@ class Constant {
             Menu( "カスタマイズ",
                 MenuLists.customize,
                 "",
-                false,
+                false, // 今後実装予定
                 false,
                 false),
 
             Menu( "初期画面設定",
                 MenuLists.firstViewSetting,
                 "",
-                false,
+                false, // 今後実装予定
                 false,
                 false),
 
@@ -198,7 +198,7 @@ class Constant {
             Menu("成績参照",
                 MenuLists.termPerformance,
                 "https://eweb.stud.tokushima-u.ac.jp/Portal/StudentApp/ReferResults/Menu.aspx",
-                false,
+                true,
                 false,
                 true),
 
@@ -219,21 +219,21 @@ class Constant {
             Menu("キャリア支援室",
                 MenuLists.tokudaiCareerCenter,
                 "https://www.tokudai-syusyoku.com/index.php",
-                false,
+                true,
                 false,
                 true),
 
             Menu("システムサービス一覧",
                 MenuLists.systemServiceList,
                 "https://www.ait.tokushima-u.ac.jp/service/list_out/",
-                false,
+                true,
                 false,
                 true),
 
             Menu("Eラーニング一覧",
                 MenuLists.eLearningList,
                 "https://uls01.ulc.tokushima-u.ac.jp/info/index.html",
-                false,
+                true,
                 false,
                 true),
 
