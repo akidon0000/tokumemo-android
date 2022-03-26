@@ -134,7 +134,7 @@ class Constant {
 
             Menu( "このアプリについて",
                 MenuLists.aboutThisApp,
-                "https://github.com/tokudai0000/univIP/blob/main/terms/TokumemoExplanation.txt",
+                "https://github.com/tokudai0000/document/tree/main/tokumemo/terms",
                 true,
                 false,
                 false),

@@ -15,9 +15,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProviders
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.ktx.Firebase
 import com.tokudai0000.tokumemo.AKLibrary.guard
 import com.tokudai0000.tokumemo.ui.menu.MenuActivity
 import com.tokudai0000.tokumemo.MenuLists
