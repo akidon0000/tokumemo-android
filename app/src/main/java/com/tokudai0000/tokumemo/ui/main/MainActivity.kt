@@ -1,6 +1,7 @@
 package com.tokudai0000.tokumemo.ui.main
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -20,6 +21,7 @@ import com.tokudai0000.tokumemo.ui.menu.MenuActivity
 import com.tokudai0000.tokumemo.MenuLists
 import com.tokudai0000.tokumemo.Model.DataManager
 import com.tokudai0000.tokumemo.R
+import com.tokudai0000.tokumemo.ui.agreement.AgreementActivity
 import com.tokudai0000.tokumemo.ui.menu.Password.PasswordActivity
 import com.tokudai0000.tokumemo.ui.menu.Syllabus.SyllabusActivity
 
@@ -39,6 +41,15 @@ class MainActivity : AppCompatActivity() {
 
         // WebViewの初期設定を行う
         webViewSetup()
+
+        val pref = getSharedPreferences("latestTermsVersion", Context.MODE_PRIVATE)
+        val latestTermsVersion = pref.getString("version", "")
+
+        if (latestTermsVersion != "1.0.2"){
+            val intent = Intent(this, AgreementActivity::class.java)
+            // 戻ってきた時、startForMenuActivityを呼び出す
+            startActivity(intent)
+        }
 
     }
 
