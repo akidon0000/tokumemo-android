@@ -45,6 +45,29 @@ class MenuActivity : AppCompatActivity() {
                 // 今期の成績をタップされた場合、URLを作成する
                 menuUrl = viewModel.createCurrentTermPerformanceUrl()
             }
+
+            if (menuID == MenuLists.setting.toString()) {
+                viewModel.menuLists = Constant.initSettingLists
+                listView?.adapter = ListAdapter(this, viewModel.menuLists)
+                return@setOnItemClickListener
+            }
+
+            if (menuID == MenuLists.buckToMenu.toString()) {
+                viewModel.menuLists = arrayListOf<Menu>()
+                // ListViewに表示する内容をセット
+                for (lists in Constant.menuLists) {
+                    if (lists.isDisplay) {
+                        viewModel.menuLists.add(lists)
+                    }
+                }
+                listView?.adapter = ListAdapter(this, viewModel.menuLists)
+                return@setOnItemClickListener
+            }
+
+            if (menuUrl == "") {
+                finish()
+                return@setOnItemClickListener
+            }
             // 親(MainActivity)にどのセルがタップされたのかを伝える
             val intent = Intent()
             intent.putExtra("MenuID_KEY", menuID)

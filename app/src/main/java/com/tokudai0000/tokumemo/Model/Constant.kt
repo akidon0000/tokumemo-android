@@ -25,11 +25,13 @@ enum class MenuLists {
     systemServiceList,              // システムサービス一覧
     eLearningList,                  // Eラーニング一覧
     universityWeb,                  // 大学サイト
+    setting,                        // 設定へ
 
-    customize,                       // 並び替え
+    customize,                      // 並び替え
     firstViewSetting,               // 初期画面設定
     password,                       // パスワード
     aboutThisApp,                   // このアプリについて
+    buckToMenu,                     // 戻る
 }
 
 class Menu ( var title: String,               // 表示名ユーザーが変更することができる
@@ -111,33 +113,7 @@ class Constant {
                 false,
                 true),
 
-            Menu( "パスワード",
-                MenuLists.password,
-                "",
-                true,
-                false,
-                false),
-
-            Menu( "カスタマイズ",
-                MenuLists.customize,
-                "",
-                false, // 今後実装予定
-                false,
-                false),
-
-            Menu( "初期画面設定",
-                MenuLists.firstViewSetting,
-                "",
-                false, // 今後実装予定
-                false,
-                false),
-
-            Menu( "このアプリについて",
-                MenuLists.aboutThisApp,
-                "https://github.com/tokudai0000/document/tree/main/tokumemo/terms",
-                true,
-                false,
-                false),
+            // 以下デフォルトでは表示させない
 
             Menu("教務事務システム[PC]",
                 MenuLists.courseManagementHomePC,
@@ -242,7 +218,54 @@ class Constant {
                 "https://www.tokushima-u.ac.jp/",
                 true,
                 false,
-                true)
+                true),
+
+            // 設定類
+
+            Menu( "設定 >",
+                MenuLists.setting,
+                "",
+                true,
+                false,
+                true),
+        )
+
+        //ユーザーリストでデーターを追加
+        val initSettingLists = arrayListOf<Menu> (
+            Menu( "パスワード",
+                MenuLists.password,
+                "",
+                true,
+                false,
+                false),
+
+            Menu( "カスタマイズ",
+                MenuLists.customize,
+                "",
+                false, // 今後実装予定
+                false,
+                false),
+
+            Menu( "初期画面設定",
+                MenuLists.firstViewSetting,
+                "",
+                false, // 今後実装予定
+                false,
+                false),
+
+            Menu( "このアプリについて",
+                MenuLists.aboutThisApp,
+                "https://github.com/tokudai0000/document/tree/main/tokumemo/terms",
+                true,
+                false,
+                false),
+
+            Menu( "＜ 戻る",
+                MenuLists.buckToMenu,
+                "",
+                true,
+                false,
+                false),
         )
     }
 
