@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.tokudai0000.tokumemo.AKLibrary.guard
+import com.tokudai0000.tokumemo.Constant
 import com.tokudai0000.tokumemo.ui.menu.MenuActivity
 import com.tokudai0000.tokumemo.MenuLists
 import com.tokudai0000.tokumemo.Model.DataManager
@@ -42,12 +43,10 @@ class MainActivity : AppCompatActivity() {
         // WebViewの初期設定を行う
         webViewSetup()
 
-        val pref = getSharedPreferences("latestTermsVersion", Context.MODE_PRIVATE)
-        val latestTermsVersion = pref.getString("version", "")
-
-        if (latestTermsVersion != "1.0.2"){
+        // 利用規約同意画面を表示するべきか
+        if (shouldShowTermsAgreementView()) {
+            // 利用規約同意画面を表示
             val intent = Intent(this, AgreementActivity::class.java)
-            // 戻ってきた時、startForMenuActivityを呼び出す
             startActivity(intent)
         }
 
@@ -269,6 +268,13 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    // 最新の利用規約同意者か判定し、同意画面の表示を行うべきか判定
+    private fun shouldShowTermsAgreementView():Boolean {
+        val pref = getSharedPreferences("latestTermsVersion", Context.MODE_PRIVATE)
+        val latestTermsVersion = pref.getString("version", "")
+        return (latestTermsVersion != Constant.latestTermsVersion)
     }
 
     // 以下、暗号化してデバイスに保存する(PasswordActivityにも存在するので今後、統一)

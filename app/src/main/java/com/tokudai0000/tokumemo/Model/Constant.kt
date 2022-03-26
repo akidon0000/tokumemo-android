@@ -42,7 +42,7 @@ class Menu ( var title: String,               // 表示名ユーザーが変更�
 class Constant {
     companion object {
         /// 現在の利用規約バージョン
-        val latestTermsVersion = "1.0.1"
+        val latestTermsVersion = "1.0.2"
 
         /// WebViewで読み込みを許可するドメイン
         val allowedDomains = arrayOf("tokushima-u.ac.jp",    // 大学サイト

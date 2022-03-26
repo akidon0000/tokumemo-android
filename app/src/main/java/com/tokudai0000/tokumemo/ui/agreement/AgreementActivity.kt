@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
+import com.tokudai0000.tokumemo.Constant
 import com.tokudai0000.tokumemo.R
 import com.tokudai0000.tokumemo.ui.main.MainModel
 import com.tokudai0000.tokumemo.ui.menu.MenuActivity
@@ -51,7 +52,7 @@ class AgreementActivity : AppCompatActivity() {
 
         agreementButton.setOnClickListener {
             getSharedPreferences("latestTermsVersion", Context.MODE_PRIVATE).edit().apply {
-                putString("version", "1.0.2")
+                putString("version", Constant.latestTermsVersion)
                 commit()
             }
             finish()
