@@ -4,16 +4,12 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
 
-        <!-- Primary brand color. -->
+        <!-- アプリ一覧のタブバー -->
         <item name="colorPrimary">@color/white</item>
+        <!-- ステータスバー -->
         <item name="colorPrimaryVariant">@color/white</item>
-        <item name="android:textColorPrimary">@color/white</item>
-        <item name="android:background">@color/white</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <item name="colorOnSecondary">@color/white</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
 
     </style>
 
@@ -22,7 +18,7 @@
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowIsTranslucent">true</item>
 
-        <!-- ステータスバーの表示 -->
+        <!-- ステータスバー -->
         <item name="colorPrimaryVariant">@color/white</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
