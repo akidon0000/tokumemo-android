@@ -222,7 +222,7 @@ class Constant {
 
             // 設定類
 
-            Menu( "設定 >",
+            Menu( "設定 ＞",
                 MenuLists.setting,
                 "",
                 true,
@@ -239,19 +239,20 @@ class Constant {
                 false,
                 false),
 
-            Menu( "カスタマイズ",
-                MenuLists.customize,
-                "",
-                false, // 今後実装予定
-                false,
-                false),
-
-            Menu( "初期画面設定",
-                MenuLists.firstViewSetting,
-                "",
-                false, // 今後実装予定
-                false,
-                false),
+            // 今後実装予定
+//            Menu( "カスタマイズ",
+//                MenuLists.customize,
+//                "",
+//                true,
+//                false,
+//                false),
+//
+//            Menu( "初期画面設定",
+//                MenuLists.firstViewSetting,
+//                "",
+//                true,
+//                false,
+//                false),
 
             Menu( "このアプリについて",
                 MenuLists.aboutThisApp,
