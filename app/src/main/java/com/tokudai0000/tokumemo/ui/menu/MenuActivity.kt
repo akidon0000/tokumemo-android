@@ -64,10 +64,6 @@ class MenuActivity : AppCompatActivity() {
                 return@setOnItemClickListener
             }
 
-            if (menuUrl == "") {
-                finish()
-                return@setOnItemClickListener
-            }
             // 親(MainActivity)にどのセルがタップされたのかを伝える
             val intent = Intent()
             intent.putExtra("MenuID_KEY", menuID)
