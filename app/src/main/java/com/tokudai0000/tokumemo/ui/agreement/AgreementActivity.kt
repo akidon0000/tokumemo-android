@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.util.Linkify
 import android.webkit.WebView
 import android.widget.Button
 import android.widget.TextView
@@ -57,6 +58,15 @@ class AgreementActivity : AppCompatActivity() {
             }
             finish()
         }
+        textView.setAutoLinkMask(Linkify.ALL)
+        textView.text = "トクメモのご利用規約またはプライバシーポリシーが更新されています。\n" +
+                "サービスを継続してご利用するには、新しいご利用規約とプライバシーポリシーに同意する必要があります。\n" +
+                "\n" +
+                "最終改定日\n" +
+                "2022年3月22日(火)\n" +
+                "\n" +
+                "変更点\n" +
+                "https://github.com/tokudai0000/document/commit/660ab5db89994d1f52c3ed47df597a8513bc12ca"
     }
 
 }
