@@ -11,6 +11,7 @@ import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
+import android.widget.ImageButton
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProviders
@@ -59,9 +60,9 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this).get(MainModel::class.java)
         webView = findViewById<WebView>(R.id.webView)
 
-        val webViewGoBackButton = findViewById<Button>(R.id.webViewGoBackButton)
-        val webViewGoForwardButton = findViewById<Button>(R.id.webViewGoForwardButton)
-        val showMenuListsButton = findViewById<Button>(R.id.showMenuListsButton)
+        val webViewGoBackButton = findViewById<ImageButton>(R.id.webViewGoBackButton)
+        val webViewGoForwardButton = findViewById<ImageButton>(R.id.webViewGoForwardButton)
+        val showMenuListsButton = findViewById<ImageButton>(R.id.showMenuListsButton)
 
         // Action
         webViewGoBackButton.setOnClickListener { webView.goBack() }
@@ -174,7 +175,6 @@ class MainActivity : AppCompatActivity() {
                     // 許可外のURLが来た場合は、Chromeで開く
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(urlString))
                     startActivity(intent)
-                    return
                 }
 
                 // お気に入り画面のためにURLを保持
