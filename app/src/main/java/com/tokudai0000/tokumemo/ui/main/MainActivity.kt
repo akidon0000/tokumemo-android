@@ -44,6 +44,14 @@ class MainActivity : AppCompatActivity() {
         // WebViewの初期設定を行う
         webViewSetup()
 
+        if (shouldShowPasswordView()) {
+            // パスワード登録画面を表示
+            val intent = Intent(this, PasswordActivity::class.java)
+            intent.putExtra("showMessage", true);
+            // 戻ってきた時、startForPasswordActivityを呼び出す
+            startForPasswordActivity.launch(intent)
+        }
+
         // 利用規約同意画面を表示するべきか
         if (shouldShowTermsAgreementView()) {
             // 利用規約同意画面を表示
@@ -275,6 +283,13 @@ class MainActivity : AppCompatActivity() {
         val pref = getSharedPreferences("latestTermsVersion", Context.MODE_PRIVATE)
         val latestTermsVersion = pref.getString("version", "")
         return (latestTermsVersion != Constant.latestTermsVersion)
+    }
+
+    // ハスワードを登録しているか判定し、パスワード画面の表示を行うべきか判定
+    private fun shouldShowPasswordView():Boolean {
+        val cAccount = encryptedLoad("KEY_cAccount")
+        val password = encryptedLoad("KEY_password")
+        return (cAccount == "" || password == "")
     }
 
     // 以下、暗号化してデバイスに保存する(PasswordActivityにも存在するので今後、統一)

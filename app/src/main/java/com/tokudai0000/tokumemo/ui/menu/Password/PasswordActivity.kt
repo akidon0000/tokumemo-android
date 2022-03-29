@@ -1,7 +1,10 @@
 package com.tokudai0000.tokumemo.ui.menu.Password
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,6 +16,7 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.tokudai0000.tokumemo.R
 
+
 class PasswordActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,6 +24,24 @@ class PasswordActivity : AppCompatActivity() {
         setContentView(R.layout.activity_password)
 
         initSetup()
+
+        showMessage()
+
+    }
+
+    private fun showMessage() {
+        val value = intent.getBooleanExtra("showMessage", false) //設定したkeyで取り出す
+        if (value) {
+            var alertDialog = AlertDialog.Builder(this) // FragmentではActivityを取得して生成
+                .setTitle("おしらせ")
+                .setMessage("パスワードの入力を行うと、" +
+                        "自動でログインしてくれるようになります。")
+                .setPositiveButton("OK", null)
+                .show()
+
+            val positiveButton: Button = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+            positiveButton.setTextColor(Color.argb(100, 0, 0, 255))
+        }
     }
 
     private fun initSetup() {
@@ -55,7 +77,7 @@ class PasswordActivity : AppCompatActivity() {
                 }
 
                 // cアカウントの先頭はcから始まる(isEmptyで検証してる為、エラーが起きない)
-                cAccountText.substring(0,1) != "c" -> {
+                cAccountText.substring(0, 1) != "c" -> {
                     cAccountMessageLabel.text = "cアカウント例(c100100100)"
                 }
 
@@ -81,9 +103,10 @@ class PasswordActivity : AppCompatActivity() {
         }
 
         // 入力文字数のカウント、そして表示を行う
-        cAccountTextField.addTextChangedListener(object: TextWatcher {
+        cAccountTextField.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
             // テキストが変更された直後(入力が確定された後)に呼び出される
             override fun afterTextChanged(s: Editable?) {
                 cAccountTextSizeLabel.text = "${cAccountTextField.text.toString().length}/10"
@@ -114,11 +137,11 @@ class PasswordActivity : AppCompatActivity() {
                 .build()
 
         val prefs = EncryptedSharedPreferences.create(
-                applicationContext,
-                PasswordActivity.PREF_NAME,
-                mainKey,
-                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            applicationContext,
+            PasswordActivity.PREF_NAME,
+            mainKey,
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
         )
         return prefs.getString(KEY, "")!! // nilの場合は空白を返す
     }
@@ -129,13 +152,13 @@ class PasswordActivity : AppCompatActivity() {
                 .build()
 
         val prefs = EncryptedSharedPreferences.create(
-                applicationContext,
-                PasswordActivity.PREF_NAME,
-                mainKey,
-                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            applicationContext,
+            PasswordActivity.PREF_NAME,
+            mainKey,
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
         )
-        with (prefs.edit()) {
+        with(prefs.edit()) {
             putString(KEY, text)
             apply()
         }
