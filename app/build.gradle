@@ -12,8 +12,8 @@ android {
         applicationId "com.tokudai0000.tokumemo"
         minSdkVersion 23
         targetSdkVersion 32
-        versionCode 3
-        versionName "0.0.99(2)"
+        versionCode 6
+        versionName "1.1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
