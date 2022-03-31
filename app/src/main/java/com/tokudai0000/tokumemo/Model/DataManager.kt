@@ -2,6 +2,10 @@ package com.tokudai0000.tokumemo.Model
 
 public final class DataManager {
     companion object {
-        public var isExecuteJavascript = false
+        /// JavaScriptを動かすかどうかのフラグ
+        ///
+        /// 次に読み込まれるURLはJavaScriptを動かすことを許可する
+        /// これがないと、ログインに失敗した場合、永遠とログイン処理を行われてしまう
+        public var canExecuteJavascript = false
     }
 }

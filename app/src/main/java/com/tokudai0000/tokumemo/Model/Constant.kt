@@ -25,11 +25,13 @@ enum class MenuLists {
     systemServiceList,              // システムサービス一覧
     eLearningList,                  // Eラーニング一覧
     universityWeb,                  // 大学サイト
+    setting,                        // 設定へ
 
-    customize,                       // 並び替え
+    customize,                      // 並び替え
     firstViewSetting,               // 初期画面設定
     password,                       // パスワード
     aboutThisApp,                   // このアプリについて
+    buckToMenu,                     // 戻る
 }
 
 class Menu ( var title: String,               // 表示名ユーザーが変更することができる
@@ -40,8 +42,19 @@ class Menu ( var title: String,               // 表示名ユーザーが変更�
              val canInitView: Boolean )       // 初期画面として設定可能か
 
 class Constant {
-
     companion object {
+        /// 現在の利用規約バージョン
+        val latestTermsVersion = "1.0.2"
+
+        /// WebViewで読み込みを許可するドメイン
+        val allowedDomains = arrayOf("tokushima-u.ac.jp",    // 大学サイト
+                                    "office365.com",        // outlook(メール) ログイン画面
+                                    "microsoftonline.com",  // outlook(メール) ログイン画面表示前、1度だけ遷移されるその後"office365.com"へ遷移される
+                                    "office.com",           // outlook(メール) メールボックス
+                                    "tokudai-syusyoku.com", // キャリア支援室
+                                    "tokudai.marucoop.com", // 徳島大学生活共同組合
+                                    "youtube.com")          // 大学サイトのインライン再生に対応させる為
+
         //ユーザーリストでデーターを追加
         val menuLists = arrayListOf<Menu> (
             Menu( "教務事務システム",
@@ -68,7 +81,7 @@ class Constant {
             Menu( "開館カレンダー",
                 MenuLists.libraryCalendar,
                 "",
-                true,
+                false, // 今後実装予定
                 false,
                 true),
 
@@ -100,33 +113,7 @@ class Constant {
                 false,
                 true),
 
-            Menu( "パスワード",
-                MenuLists.password,
-                "",
-                true,
-                false,
-                false),
-
-            Menu( "カスタマイズ",
-                MenuLists.customize,
-                "",
-                false,
-                false,
-                false),
-
-            Menu( "初期画面設定",
-                MenuLists.firstViewSetting,
-                "",
-                false,
-                false,
-                false),
-
-            Menu( "このアプリについて",
-                MenuLists.aboutThisApp,
-                "https://github.com/tokudai0000/univIP/blob/main/terms/TokumemoExplanation.txt",
-                true,
-                false,
-                false),
+            // 以下デフォルトでは表示させない
 
             Menu("教務事務システム[PC]",
                 MenuLists.courseManagementHomePC,
@@ -187,7 +174,7 @@ class Constant {
             Menu("成績参照",
                 MenuLists.termPerformance,
                 "https://eweb.stud.tokushima-u.ac.jp/Portal/StudentApp/ReferResults/Menu.aspx",
-                false,
+                true,
                 false,
                 true),
 
@@ -208,21 +195,21 @@ class Constant {
             Menu("キャリア支援室",
                 MenuLists.tokudaiCareerCenter,
                 "https://www.tokudai-syusyoku.com/index.php",
-                false,
+                true,
                 false,
                 true),
 
             Menu("システムサービス一覧",
                 MenuLists.systemServiceList,
                 "https://www.ait.tokushima-u.ac.jp/service/list_out/",
-                false,
+                true,
                 false,
                 true),
 
             Menu("Eラーニング一覧",
                 MenuLists.eLearningList,
                 "https://uls01.ulc.tokushima-u.ac.jp/info/index.html",
-                false,
+                true,
                 false,
                 true),
 
@@ -231,7 +218,55 @@ class Constant {
                 "https://www.tokushima-u.ac.jp/",
                 true,
                 false,
-                true)
+                true),
+
+            // 設定類
+
+            Menu( "設定 ＞",
+                MenuLists.setting,
+                "",
+                true,
+                false,
+                true),
+        )
+
+        //ユーザーリストでデーターを追加
+        val initSettingLists = arrayListOf<Menu> (
+            Menu( "パスワード",
+                MenuLists.password,
+                "",
+                true,
+                false,
+                false),
+
+            // 今後実装予定
+//            Menu( "カスタマイズ",
+//                MenuLists.customize,
+//                "",
+//                true,
+//                false,
+//                false),
+//
+//            Menu( "初期画面設定",
+//                MenuLists.firstViewSetting,
+//                "",
+//                true,
+//                false,
+//                false),
+
+            Menu( "このアプリについて",
+                MenuLists.aboutThisApp,
+                "https://github.com/tokudai0000/document/tree/main/tokumemo/terms",
+                true,
+                false,
+                false),
+
+            Menu( "＜ 戻る",
+                MenuLists.buckToMenu,
+                "",
+                true,
+                false,
+                false),
         )
     }
 
